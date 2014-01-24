@@ -1,0 +1,12 @@
+	<table class="table">
+		<tr class="heading_row">
+			<td class="fixed_small center border_none"><span class="paymnt_arrow"></span></td>
+			<td><?php $this->_("Proxmox.service_info.proxmox_username");?></td>
+			<td class="border_left last"><?php $this->_("Proxmox.service_info.proxmox_ip");?></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><?php $this->Html->_($service_fields->proxmox_username);?></td>
+			<td><?php $this->Html->_($service_fields->proxmox_ip);?></td>
+		</tr>
+	</table>

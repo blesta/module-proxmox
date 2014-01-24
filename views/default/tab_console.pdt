@@ -1,0 +1,18 @@
+	
+	<div class="title_row first">
+		<h3><?php $this->_("Proxmox.tab_console.heading_console");?></h3>
+	</div>
+	<div class="pad">
+		<ul>
+			<li><?php $this->_("Proxmox.tab_console.vnc_ip");?> <?php $this->Html->_($console->vnc_ip);?></li>
+			<li><?php $this->_("Proxmox.tab_console.vnc_port");?> <?php $this->Html->_($console->vnc_port);?></li>
+			<li><?php $this->_("Proxmox.tab_console.vnc_user");?> <?php $this->Html->_($console->vnc_user);?></li>
+			<li><?php $this->_("Proxmox.tab_console.vnc_password");?> <?php $this->Html->_($console->vnc_password);?></li>
+		</ul>
+	</div>
+	
+<script type="text/javascript">
+$(document).ready(function() {
+	$(this).blestaSetHeadTag("link", {media:"screen", type:"text/css", rel:"stylesheet", href: "<?php echo $this->Html->safe($this->view_dir . "css/styles.css");?>"});
+});
+</script>

@@ -1,0 +1,78 @@
+		<?php
+		$this->Widget->clear();
+		$this->Widget->create($this->_("Proxmox.edit_row.box_title", true));
+		?>
+		<div class="inner">
+			<?php
+			$this->Form->create();
+			?>
+			<div class="title_row first">
+				<h3><?php $this->_("Proxmox.edit_row.basic_title");?></h3>
+			</div>
+			<div class="pad">
+				<ul>
+					<li>
+						<?php
+						$this->Form->label($this->_("Proxmox.row_meta.server_name", true), "server_name");
+						$this->Form->fieldText("server_name", $this->Html->ifSet($vars->server_name), array('id' => "server_name"));
+						?>
+					</li>
+					<li>
+						<?php
+						$this->Form->label($this->_("Proxmox.row_meta.user", true), "user");
+						$this->Form->fieldText("user", $this->Html->ifSet($vars->user), array('id' => "user"));
+						?>
+					</li>
+					<li>
+						<?php
+						$this->Form->label($this->_("Proxmox.row_meta.password", true), "password");
+						$this->Form->fieldText("password", $this->Html->ifSet($vars->password), array('id' => "password"));
+						?>
+					</li>
+					<li>
+						<?php
+						$this->Form->label($this->_("Proxmox.row_meta.host", true), "host");
+						$this->Form->fieldText("host", $this->Html->ifSet($vars->host), array('id' => "host"));
+						?>
+					</li>
+					<li>
+						<?php
+						$this->Form->label($this->_("Proxmox.row_meta.port", true), "port");
+						$this->Form->fieldText("port", $this->Html->ifSet($vars->port, $this->_("Proxmox.row_meta.default_port", true)), array('id' => "port"));
+						?>
+					</li>
+					<li>
+						<?php
+						$this->Form->label($this->_("Proxmox.row_meta.storage", true), "storage");
+						$this->Form->fieldText("storage", $this->Html->ifSet($vars->storage, $this->_("Proxmox.row_meta.default_storage", true)), array('id' => "storage"));
+						?>
+					</li>
+					<li>
+						<?php
+						$this->Form->label($this->_("Proxmox.row_meta.vmid", true), "vmid");
+						$this->Form->fieldText("vmid", $this->Html->ifSet($vars->vmid, $this->_("Proxmox.row_meta.default_vmid", true)), array('id' => "vmid"));
+						?>
+					</li>
+					<li>
+						<?php
+						$this->Form->label($this->_("Proxmox.row_meta.default_template", true), "default_template");
+						$this->Form->fieldText("default_template", $this->Html->ifSet($vars->default_template), array('id' => "default_template"));
+						?>
+					</li>
+					<li>
+						<?php
+						$this->Form->label($this->_("Proxmox.row_meta.ips", true), "ips");
+						$this->Form->fieldTextarea("ips", $this->Html->ifSet($vars->ips), array('id' => "ips"));
+						?>
+					</li>
+				</ul>
+			</div>
+			
+			<div class="button_row"><a class="btn_right submit" href="#"><?php $this->_("Proxmox.edit_row.add_btn");?></a></div>
+			<?php
+			$this->Form->end();
+			?>
+		</div>
+		<?php
+		$this->Widget->end();
+		?>

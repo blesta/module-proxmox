@@ -1,0 +1,43 @@
+	
+	<div class="title_row first">
+		<h3><?php $this->_("Proxmox.tab_stats.heading_stats");?></h3>
+	</div>
+	<div class="pad">
+		<ul class="options">
+			<?php
+			$keys = array('mem_formatted' => "memory");
+			foreach ($keys as $key => $name) {
+				if ($this->Html->ifSet($server->{$key}, false)) {
+					$percent_used = $this->Html->_($server->{$key}['percent_used_' . $name], true);
+			?>
+			<li>
+				<?php $this->_("Proxmox.tab_stats." . $name);?>
+				<span class="buff <?php echo $percent_used > 80 ? "stopped" : "running";?>"><?php $this->_("Proxmox.tab_stats." . $name . "_stats", false, $this->Html->_($server->{$key}['used_' . $name . '_formatted'], true), $this->Html->_($server->{$key}['total_' . $name . '_formatted'], true));?></span>
+				<?php $this->_("Proxmox.tab_stats." . $name . "_percent_available", false, $percent_used);?>
+			</li>
+			<?php
+				}
+			}
+			?>
+		</ul>
+	</div>
+	
+	<div class="title_row">
+		<h3><?php $this->_("Proxmox.tab_stats.heading_graphs");?></h3>
+	</div>
+	<div class="pad">
+		<?php
+		$graph_keys = array("mem,maxmem", "cpu", "netin,netout", "diskread,diskwrite");
+		foreach ($graph_keys as $value) {
+		?>
+		<p><img src="<?php echo $this->Html->safe($this->base_uri . "clients/servicetab/" . $this->Html->ifSet($client_id) . "/" . $this->Html->ifSet($service_id) . "/tabStats/" . $value); ?>" /></p>
+		<?php
+		}
+		?>
+	</div>
+	
+<script type="text/javascript">
+$(document).ready(function() {
+	$(this).blestaSetHeadTag("link", {media:"screen", type:"text/css", rel:"stylesheet", href: "<?php echo $this->Html->safe($this->view_dir . "css/styles.css");?>"});
+});
+</script>

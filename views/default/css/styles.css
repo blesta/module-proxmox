@@ -1,0 +1,21 @@
+
+.content_section .inner .pad { word-wrap:break-word;}
+
+.options {margin-top:15px;}
+.options a { padding-left:24px; margin-right:24px; font-weight:bold;}
+	.options a.boot { background:url("../../../../../../vendors/fugue_icons/control-power.png") no-repeat 0 50%;}
+	.options a.reboot { background:url("../../../../../../vendors/fugue_icons/arrow-circle-double.png") no-repeat 0 50%;}
+	.options a.shutdown { background:url("../../../../../../vendors/fugue_icons/control-power.png") no-repeat 0 50%;}
+	.options a.reinstall { background:url("../../../../../../vendors/fugue_icons/drive--exclamation.png") no-repeat 0 50%;}
+	.options a.mount_iso { background:url("../../../../../../vendors/fugue_icons/disc--plus.png") no-repeat 0 50%;}
+	.options a.unmount_iso { background:url("../../../../../../vendors/fugue_icons/disc--minus.png") no-repeat 0 50%;}
+	.options a.hostname { background:url("../../../../../../vendors/fugue_icons/ui-text-field.png") no-repeat 0 50%;}
+	.options a.password { background:url("../../../../../../vendors/fugue_icons/ui-text-field-password-red.png") no-repeat 0 50%;}
+
+.options span.running { background-color:#8dc248; color:#fff;}
+.options span.stopped { background-color:#ca3334; color:#fff;}
+.options span.disabled { background-color:#444; color:#fff;}
+
+.options .actions {float:left; margin-right:10px; background-color:#f9f9f9; padding:8px; border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px;}
+
+applet { border:1px solid #e9e9e9; margin-top:15px;}

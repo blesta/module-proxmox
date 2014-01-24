@@ -1,0 +1,20 @@
+
+	<div class="heading options space">
+		<h5><?php $this->_("Proxmox.tab_client_stats.heading_graphs");?></h5>
+	</div>
+	<?php $graph_keys = array("mem,maxmem", "cpu", "netin,netout", "diskread,diskwrite"); ?>
+	<div class="pad">
+		<?php
+		foreach ($graph_keys as $value) {
+		?>
+		<p><img src="<?php echo $this->Html->safe($this->base_uri . "services/manage/" . $this->Html->ifSet($service_id) . "/tabClientStats/" . $value); ?>" /></p>
+		<?php
+		}
+		?>
+	</div>
+	
+<script type="text/javascript">
+$(document).ready(function() {
+	$(this).blestaSetHeadTag("link", {media:"screen", type:"text/css", rel:"stylesheet", href: "<?php echo $this->Html->safe($this->view_dir . "css/styles.css");?>"});
+});
+</script>

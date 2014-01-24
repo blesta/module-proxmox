@@ -1,0 +1,128 @@
+	
+	<div class="title_row first">
+		<h3><?php $this->_("Proxmox.tab_actions.heading_actions");?></h3>
+	</div>
+	
+	<div class="pad">
+		<div class="options">
+			<div class="status">
+				<p><?php $this->_("Proxmox.tab_actions.server_status");?> <span class="buff <?php $this->Html->_($server->status);?>"><?php $this->_("Proxmox.tab_actions.status_" . $this->Html->_($server->status, true));?></span></p>
+			</div>
+			<?php
+			if ($this->Html->ifSet($server->status) == "running") {
+			?>
+			<a href="<?php echo $this->Html->safe($this->base_uri . "clients/servicetab/" . $this->Html->ifSet($client_id) . "/" . $this->Html->ifSet($service_id) . "/tabActions/shutdown/");?>" class="shutdown"><?php $this->_("Proxmox.!actions.shutdown");?></a>
+			<?php
+			}
+			elseif ($this->Html->ifSet($server->status) == "stopped") {
+			?>
+			<a href="<?php echo $this->Html->safe($this->base_uri . "clients/servicetab/" . $this->Html->ifSet($client_id) . "/" . $this->Html->ifSet($service_id) . "/tabActions/boot/");?>" class="boot"><?php $this->_("Proxmox.!actions.boot");?></a>
+			<?php
+			}
+			if ($this->Html->ifSet($type) == "qemu") {
+			?>
+			<a href="#" class="mount_iso"><?php $this->_("Proxmox.!actions.mount_iso");?></a>
+			<a href="<?php echo $this->Html->safe($this->base_uri . "clients/servicetab/" . $this->Html->ifSet($client_id) . "/" . $this->Html->ifSet($service_id) . "/tabActions/unmount/");?>" class="unmount_iso"><?php $this->_("Proxmox.!actions.unmount_iso");?></a>
+			<?php
+			}
+			else {
+			?>
+			<a href="#" class="reinstall"><?php $this->_("Proxmox.!actions.reinstall");?></a>
+			<?php
+			}
+			?>
+		</div>
+	</div>
+	
+	<div class="clear"></div>
+	<div id="mount_iso" style="display:none;">
+		<div class="title_row">
+			<h3><?php $this->_("Proxmox.tab_actions.heading_mount_iso");?></h3>
+		</div>
+		<?php
+		$this->Form->create($this->base_uri . "clients/servicetab/" . $this->Html->ifSet($client_id) . "/" . $this->Html->ifSet($service_id) . "/tabActions/mount/");
+		?>
+		<div class="pad">
+			<ul>
+				<li>
+					<?php
+					$this->Form->label($this->_("Proxmox.tab_actions.field_iso", true), "iso");
+					$this->Form->fieldSelect("iso", $this->Html->ifSet($isos), $this->Html->ifSet($vars->iso), array('id' => "iso"));
+					?>
+				</li>
+			</ul>
+		</div>
+		<div class="button_row">
+			<div class="btn submit right_btn">
+				<a class="btn_right submit" href="#"><?php $this->_("Proxmox.tab_actions.field_mount_submit");?></a>
+			</div>
+		</div>
+		<?php
+		$this->Form->end();
+		?>
+	</div>
+	
+	<div class="clear"></div>
+	<div id="reinstall" style="display:none;">
+		<div class="title_row">
+			<h3><?php $this->_("Proxmox.tab_actions.heading_reinstall");?></h3>
+		</div>
+		<?php
+		$this->Form->create($this->base_uri . "clients/servicetab/" . $this->Html->ifSet($client_id) . "/" . $this->Html->ifSet($service_id) . "/tabActions/reinstall/");
+		?>
+		<div class="pad">
+			<ul>
+				<li>
+					<?php
+					$this->Form->label($this->_("Proxmox.tab_actions.field_template", true), "template");
+					$this->Form->fieldSelect("template", $this->Html->ifSet($templates), $this->Html->ifSet($vars->template), array('id' => "template"));
+					?>
+				</li>
+				<li>
+					<?php
+					$this->Form->label($this->_("Proxmox.tab_actions.field_password", true), "password");
+					$this->Form->fieldText("password", "", array('id' => "password"));
+					?>
+				</li>
+			</ul>
+		</div>
+		<div class="button_row">
+			<div class="btn submit right_btn">
+				<a class="btn_right submit" href="#"><?php $this->_("Proxmox.tab_actions.field_reinstall_submit");?></a>
+			</div>
+		</div>
+		<?php
+		$this->Form->end();
+		?>
+	</div>
+<script type="text/javascript">
+$(document).ready(function() {
+	$(this).blestaSetHeadTag("link", {media:"screen", type:"text/css", rel:"stylesheet", href: "<?php echo $this->Html->safe($this->view_dir . "css/styles.css");?>"});
+	<?php
+	if ($this->Html->ifSet($mount_iso, false)) {
+	?>
+	showSection('mount_iso');
+	<?php
+	}
+	if ($this->Html->ifSet($reinstall, false)) {
+	?>
+	showSection('reinstall');
+	<?php
+	}
+	?>
+	
+	$('.options a.mount_iso, .options a.reinstall').click(function(e) {
+		hideSections();
+		showSection($(this).attr('class'));
+	});
+	
+	function hideSections() {
+		$('#mount_iso').hide();
+		$('#reinstall').hide();
+	}
+	
+	function showSection(id) {
+		$('#' + id).show();
+	}
+});
+</script>
