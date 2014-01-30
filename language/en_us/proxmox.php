@@ -150,18 +150,17 @@ $lang['Proxmox.tab_actions.heading_reinstall'] = "Reinstall";
 $lang['Proxmox.tab_actions.field_iso'] = "Image";
 $lang['Proxmox.tab_actions.field_mount_submit'] = "Mount";
 $lang['Proxmox.tab_actions.field_template'] = "Template";
-$lang['Proxmox.tab_actions.field_password'] = "Root password";
+$lang['Proxmox.tab_actions.field_password'] = "Root Password";
 $lang['Proxmox.tab_actions.field_reinstall_submit'] = "Reinstall";
 
 
 // Client Actions Tab
-$lang['Proxmox.tab_client_actions.heading_actions'] = "Actions";
+$lang['Proxmox.tab_client_actions.heading_actions'] = "Server Actions";
 $lang['Proxmox.tab_client_actions.heading_server_status'] = "Server Status";
 
 $lang['Proxmox.tab_client_actions.status_running'] = "Online";
 $lang['Proxmox.tab_client_actions.status_stopped'] = "Offline";
 $lang['Proxmox.tab_client_actions.status_disabled'] = "Disabled";
-$lang['Proxmox.tab_client_actions.server_status'] = "This server is";
 
 $lang['Proxmox.tab_client_actions.heading_mount_iso'] = "Mount ISO";
 $lang['Proxmox.tab_client_actions.heading_reinstall'] = "Reinstall";
@@ -200,8 +199,8 @@ $lang['Proxmox.tab_console.vnc_password'] = "VNC Password:";
 // Client Console Tab
 $lang['Proxmox.tab_client_console.heading_console'] = "Console";
 
-$lang['Proxmox.tab_client_console.vnc_ip'] = "VNC Host:";
-$lang['Proxmox.tab_client_console.vnc_port'] = "VNC Port:";
-$lang['Proxmox.tab_client_console.vnc_user'] = "VNC Username:";
-$lang['Proxmox.tab_client_console.vnc_password'] = "VNC Password:";
+$lang['Proxmox.tab_client_console.vnc_ip'] = "VNC Host";
+$lang['Proxmox.tab_client_console.vnc_port'] = "VNC Port";
+$lang['Proxmox.tab_client_console.vnc_user'] = "VNC Username";
+$lang['Proxmox.tab_client_console.vnc_password'] = "VNC Password";
 ?>

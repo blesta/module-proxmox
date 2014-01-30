@@ -16,7 +16,7 @@ class Proxmox extends Module {
 	/**
 	 * @var string The version of this module
 	 */
-	private static $version = "1.1.0";
+	private static $version = "1.2.0-rc1";
 	/**
 	 * @var string The authors of this module
 	 */
@@ -34,9 +34,6 @@ class Proxmox extends Module {
 		
 		// Load the language required by this module
 		Language::loadLang("proxmox", null, dirname(__FILE__) . DS . "language" . DS);
-		
-		error_reporting(E_ALL);
-		ini_set('display_errors', 'On');
 	}
 	
 	/**
@@ -1112,7 +1109,7 @@ class Proxmox extends Module {
 		
 		// Set default vars
 		$vars = array('hostname' => $service_fields->proxmox_hostname);
-			
+		
 		$this->view->set("isos", $this->getServerISOs($service_fields->proxmox_node, $module_row));
 		$this->view->set("templates", $this->getServerTemplates($service_fields->proxmox_node, $module_row));
 		
@@ -1207,7 +1204,7 @@ class Proxmox extends Module {
 				case "mount":
 					if($service_fields->proxmox_type != "qemu")
 						break;
-					$this->performAction("mountIso", $service_fields->proxmox_vserver_id, $service_fields->proxmox_type, $service_fields->proxmox_node, $module_row, array('iso' => $post['iso']));
+					$this->performAction("mountIso", $service_fields->proxmox_vserver_id, $service_fields->proxmox_type, $service_fields->proxmox_node, $module_row, array('iso' => $this->Html->ifSet($post['iso'])));
 					break;
 				case "unmount":
 					if($service_fields->proxmox_type != "qemu")

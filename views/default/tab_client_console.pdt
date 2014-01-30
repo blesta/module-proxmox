@@ -1,18 +1,24 @@
 
-	<div class="heading options space">
-		<h5><?php $this->_("Proxmox.tab_client_console.heading_console");?></h5>
+	<h4><?php $this->_("Proxmox.tab_client_console.heading_console");?></h4>
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<tbody>
+				<tr>
+					<td><strong><?php $this->_("Proxmox.tab_client_console.vnc_ip");?></strong></td>
+					<td><?php $this->Html->_($console->vnc_ip);?></td>
+				</tr>
+				<tr>
+					<td><strong><?php $this->_("Proxmox.tab_client_console.vnc_port");?></strong></td>
+					<td><?php $this->Html->_($console->vnc_port);?></td>
+				</tr>
+				<tr>
+					<td><strong><?php $this->_("Proxmox.tab_client_console.vnc_user");?></strong></td>
+					<td><?php $this->Html->_($console->vnc_user);?></td>
+				</tr>
+				<tr>
+					<td><strong><?php $this->_("Proxmox.tab_client_console.vnc_password");?></strong></td>
+					<td><?php $this->Html->_($console->vnc_password);?></td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
-	<div class="pad">
-		<ul>
-			<li><?php $this->_("Proxmox.tab_client_console.vnc_ip");?> <?php $this->Html->_($console->vnc_ip);?></li>
-			<li><?php $this->_("Proxmox.tab_client_console.vnc_port");?> <?php $this->Html->_($console->vnc_port);?></li>
-			<li><?php $this->_("Proxmox.tab_client_console.vnc_user");?> <?php $this->Html->_($console->vnc_user);?></li>
-			<li><?php $this->_("Proxmox.tab_client_console.vnc_password");?> <?php $this->Html->_($console->vnc_password);?></li>
-		</ul>
-	</div>
-	
-<script type="text/javascript">
-$(document).ready(function() {
-	$(this).blestaSetHeadTag("link", {media:"screen", type:"text/css", rel:"stylesheet", href: "<?php echo $this->Html->safe($this->view_dir . "css/styles.css");?>"});
-});
-</script>
