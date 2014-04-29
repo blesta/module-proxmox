@@ -16,7 +16,7 @@ class Proxmox extends Module {
 	/**
 	 * @var string The version of this module
 	 */
-	private static $version = "2.0.0";
+	private static $version = "2.1.0";
 	/**
 	 * @var string The authors of this module
 	 */
@@ -980,7 +980,7 @@ class Proxmox extends Module {
 		// Create hostname label
 		$host_name = $fields->label(Language::_("Proxmox.service_field.proxmox_hostname", true), "proxmox_hostname");
 		// Create hostname field and attach to hostname label
-		$host_name->attach($fields->fieldText("proxmox_hostname", $this->Html->ifSet($vars->proxmox_hostname), array('id'=>"proxmox_hostname")));
+		$host_name->attach($fields->fieldText("proxmox_hostname", $this->Html->ifSet($vars->proxmox_hostname, $this->Html->ifSet($vars->domain)), array('id'=>"proxmox_hostname")));
 		// Set the label as a field
 		$fields->setField($host_name);
 		
