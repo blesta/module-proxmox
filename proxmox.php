@@ -16,7 +16,7 @@ class Proxmox extends Module {
 	/**
 	 * @var string The version of this module
 	 */
-	private static $version = "2.1.0";
+	private static $version = "2.1.1";
 	/**
 	 * @var string The authors of this module
 	 */
@@ -782,7 +782,7 @@ class Proxmox extends Module {
 		Loader::loadHelpers($this, array("Form", "Html"));
 		
 		// Fetch all packages available for the given server or server group
-		$module_row = $this->getModuleRowByServer((isset($vars->module_group) ? $vars->module_group : 0), (isset($vars->module_group) ? $vars->module_group : ""));
+		$module_row = $this->getModuleRowByServer((isset($vars->module_row) ? $vars->module_row : 0), (isset($vars->module_group) ? $vars->module_group : ""));
 
 		$nodes = array();
 		
@@ -948,7 +948,7 @@ class Proxmox extends Module {
 		Loader::loadHelpers($this, array("Html"));
 		
 		// Fetch the module row available for this package
-		$module_row = $this->getModuleRowByServer((isset($package->module_group) ? $package->module_group : 0), (isset($package->module_group) ? $package->module_group : ""));
+		$module_row = $this->getModuleRowByServer((isset($package->module_row) ? $package->module_row : 0), (isset($package->module_group) ? $package->module_group : ""));
 		
 		$fields = new ModuleFields();
 		
@@ -973,7 +973,7 @@ class Proxmox extends Module {
 		Loader::loadHelpers($this, array("Html"));
 		
 		// Fetch the module row available for this package
-		$module_row = $this->getModuleRowByServer((isset($package->module_group) ? $package->module_group : 0), (isset($package->module_group) ? $package->module_group : ""));
+		$module_row = $this->getModuleRowByServer((isset($package->module_row) ? $package->module_row : 0), (isset($package->module_group) ? $package->module_group : ""));
 		
 		$fields = new ModuleFields();
 		
