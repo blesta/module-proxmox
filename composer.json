@@ -1,5 +1,5 @@
 {
-    "name": "blesta/module-proxmox",
+    "name": "blesta/proxmox",
     "description": "Proxmox",
     "license": "proprietary",
     "type": "blesta-module",
