@@ -1,24 +1,24 @@
 
-	<h4><?php $this->_("Proxmox.tab_client_console.heading_console");?></h4>
-	<div class="table-responsive">
-		<table class="table table-striped">
-			<tbody>
-				<tr>
-					<td><strong><?php $this->_("Proxmox.tab_client_console.vnc_ip");?></strong></td>
-					<td><?php $this->Html->_($console->vnc_ip);?></td>
-				</tr>
-				<tr>
-					<td><strong><?php $this->_("Proxmox.tab_client_console.vnc_port");?></strong></td>
-					<td><?php $this->Html->_($console->vnc_port);?></td>
-				</tr>
-				<tr>
-					<td><strong><?php $this->_("Proxmox.tab_client_console.vnc_user");?></strong></td>
-					<td><?php $this->Html->_($console->vnc_user);?></td>
-				</tr>
-				<tr>
-					<td><strong><?php $this->_("Proxmox.tab_client_console.vnc_password");?></strong></td>
-					<td><?php $this->Html->_($console->vnc_password);?></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+    <h4><?php $this->_('Proxmox.tab_client_console.heading_console');?></h4>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <tbody>
+                <tr>
+                    <td><strong><?php $this->_('Proxmox.tab_client_console.vnc_ip');?></strong></td>
+                    <td><?php $this->Html->_($console->vnc_ip);?></td>
+                </tr>
+                <tr>
+                    <td><strong><?php $this->_('Proxmox.tab_client_console.vnc_port');?></strong></td>
+                    <td><?php $this->Html->_($console->vnc_port);?></td>
+                </tr>
+                <tr>
+                    <td><strong><?php $this->_('Proxmox.tab_client_console.vnc_user');?></strong></td>
+                    <td><?php $this->Html->_($console->vnc_user);?></td>
+                </tr>
+                <tr>
+                    <td><strong><?php $this->_('Proxmox.tab_client_console.vnc_password');?></strong></td>
+                    <td><?php $this->Html->_($console->vnc_password);?></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
