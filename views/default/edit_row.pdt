@@ -68,7 +68,11 @@
                 </ul>
             </div>
 
-            <div class="button_row"><a class="btn_right submit" href="#"><?php $this->_('Proxmox.edit_row.add_btn');?></a></div>
+            <div class="button_row">
+                <?php
+                $this->Form->fieldSubmit('submit', $this->_('Proxmox.edit_row.add_btn', true), ['class' => 'btn btn-primary pull-right']);
+                ?>
+            </div>
             <?php
             $this->Form->end();
             ?>

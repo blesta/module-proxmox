@@ -51,9 +51,9 @@
             </ul>
         </div>
         <div class="button_row">
-            <div class="btn submit right_btn">
-                <a class="btn_right submit" href="#"><?php $this->_('Proxmox.tab_actions.field_mount_submit');?></a>
-            </div>
+            <?php
+            $this->Form->fieldSubmit('submit', $this->_('Proxmox.tab_actions.field_mount_submit', true), ['class' => 'btn btn-primary pull-right']);
+            ?>
         </div>
         <?php
         $this->Form->end();
@@ -85,9 +85,9 @@
             </ul>
         </div>
         <div class="button_row">
-            <div class="btn submit right_btn">
-                <a class="btn_right submit" href="#"><?php $this->_('Proxmox.tab_actions.field_reinstall_submit');?></a>
-            </div>
+            <?php
+            $this->Form->fieldSubmit('submit', $this->_('Proxmox.tab_actions.field_reinstall_submit', true), ['class' => 'btn btn-primary pull-right']);
+            ?>
         </div>
         <?php
         $this->Form->end();
