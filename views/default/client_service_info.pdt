@@ -1,18 +1,18 @@
-	<div class="table-responsive">
-		<table class="table table-curved table-striped">
-			<thead>
-				<tr>
-					<th><i class="fa fa-share fa-flip-vertical"></i></th>
-					<th><?php $this->_("Proxmox.service_info.proxmox_username");?></th>
-					<th><?php $this->_("Proxmox.service_info.proxmox_ip");?></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td></td>
-					<td><?php $this->Html->_($service_fields->proxmox_username);?></td>
-					<td><?php $this->Html->_($service_fields->proxmox_ip);?></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+    <div class="table-responsive">
+        <table class="table table-curved table-striped">
+            <thead>
+                <tr>
+                    <th><i class="fa fa-share fa-flip-vertical"></i></th>
+                    <th><?php $this->_('Proxmox.service_info.proxmox_username');?></th>
+                    <th><?php $this->_('Proxmox.service_info.proxmox_ip');?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td><?php $this->Html->_($service_fields->proxmox_username);?></td>
+                    <td><?php $this->Html->_($service_fields->proxmox_ip);?></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
