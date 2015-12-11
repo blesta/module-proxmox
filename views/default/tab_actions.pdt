@@ -121,7 +121,7 @@ $(document).ready(function() {
         });
 
         hideSections();
-        showSection($(this).attr('class'));
+        showSection(option);
     });
 
     function hideSections() {
