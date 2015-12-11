@@ -11,21 +11,21 @@
             <?php
             if ($this->Html->ifSet($server->status) == 'running') {
             ?>
-            <a href="<?php echo $this->Html->safe($this->base_uri . 'clients/servicetab/' . $this->Html->ifSet($client_id) . '/' . $this->Html->ifSet($service_id) . '/tabActions/shutdown/');?>" class="shutdown"><?php $this->_('Proxmox.!actions.shutdown');?></a>
+            <a href="<?php echo $this->Html->safe($this->base_uri . 'clients/servicetab/' . $this->Html->ifSet($client_id) . '/' . $this->Html->ifSet($service_id) . '/tabActions/shutdown/');?>" class="shutdown btn btn-danger"><i class="fa fa-power-off"></i> <?php $this->_('Proxmox.!actions.shutdown');?></a>
             <?php
             } elseif ($this->Html->ifSet($server->status) == 'stopped') {
             ?>
-            <a href="<?php echo $this->Html->safe($this->base_uri . 'clients/servicetab/' . $this->Html->ifSet($client_id) . '/' . $this->Html->ifSet($service_id) . '/tabActions/boot/');?>" class="boot"><?php $this->_('Proxmox.!actions.boot');?></a>
+            <a href="<?php echo $this->Html->safe($this->base_uri . 'clients/servicetab/' . $this->Html->ifSet($client_id) . '/' . $this->Html->ifSet($service_id) . '/tabActions/boot/');?>" class="boot btn btn-default"><i class="fa fa-power-off"></i> <?php $this->_('Proxmox.!actions.boot');?></a>
             <?php
             }
             if ($this->Html->ifSet($type) == 'qemu') {
             ?>
-            <a href="#" class="mount_iso"><?php $this->_('Proxmox.!actions.mount_iso');?></a>
-            <a href="<?php echo $this->Html->safe($this->base_uri . 'clients/servicetab/' . $this->Html->ifSet($client_id) . '/' . $this->Html->ifSet($service_id) . '/tabActions/unmount/');?>" class="unmount_iso"><?php $this->_('Proxmox.!actions.unmount_iso');?></a>
+            <a href="#" class="mount_iso btn btn-default"><i class="fa fa-download"></i> <?php $this->_('Proxmox.!actions.mount_iso');?></a>
+            <a href="<?php echo $this->Html->safe($this->base_uri . 'clients/servicetab/' . $this->Html->ifSet($client_id) . '/' . $this->Html->ifSet($service_id) . '/tabActions/unmount/');?>" class="unmount_iso btn btn-default"><i class="fa fa-upload"></i> <?php $this->_('Proxmox.!actions.unmount_iso');?></a>
             <?php
             } else {
             ?>
-            <a href="#" class="reinstall"><?php $this->_('Proxmox.!actions.reinstall');?></a>
+            <a href="#" class="reinstall btn btn-default"><i class="fa fa-download"></i> <?php $this->_('Proxmox.!actions.reinstall');?></a>
             <?php
             }
             ?>
@@ -110,6 +110,16 @@ $(document).ready(function() {
     ?>
 
     $('.options a.mount_iso, .options a.reinstall').click(function(e) {
+        var classes = $(this).attr('class').split(' ');
+        var option = '';
+
+        $.each(classes, function(index, value) {
+            if ($.inArray(value, ['reinstall', 'mount_iso']) > -1) {
+                option = value;
+                return false;
+            }
+        });
+
         hideSections();
         showSection($(this).attr('class'));
     });
