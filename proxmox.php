@@ -16,7 +16,7 @@ class Proxmox extends Module
     /**
      * @var string The version of this module
      */
-    private static $version = '2.3.0';
+    private static $version = '2.4.0';
     /**
      * @var string The authors of this module
      */
@@ -2055,7 +2055,7 @@ class Proxmox extends Module
             'type' => $package->meta->type,
             'template' => $module_row->meta->default_template,
             'node' => $node,
-            'hostname' => isset($vars['proxmox_hostname']) ? $vars['proxmox_hostname'] : null,
+            'hostname' => isset($vars['proxmox_hostname']) ? strtolower($vars['proxmox_hostname']) : null,
             'userid' => isset($vars['client_id']) ? 'vmuser' . $vars['client_id'] : null,
             'password' => $this->generatePassword(), // root password
             'memory' => $package->meta->memory,
@@ -2513,7 +2513,7 @@ class Proxmox extends Module
 
         return $this->Input->matches(
             $host_name,
-            "/^([a-z0-9]|[a-z0-9][a-z0-9\-]{0,61}[a-z0-9])(\.([a-z0-9]|[a-z0-9][a-z0-9\-]{0,61}[a-z0-9]))+$/"
+            "/^([a-z0-9]|[a-z0-9][a-z0-9\-]{0,61}[a-z0-9])(\.([a-z0-9]|[a-z0-9][a-z0-9\-]{0,61}[a-z0-9]))+$/i"
         );
     }
 }
