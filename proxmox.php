@@ -2424,7 +2424,7 @@ class Proxmox extends Module
             ],
             'storage' => [
                 'format' => [
-                    'rule' => ['matches', '/^[0-9a-zA-Z]+$/'],
+                    'rule' => ['matches', '/^[0-9a-zA-Z\-]+$/'],
                     'message' => Language::_('Proxmox.!error.storage.format', true)
                 ]
             ],
