@@ -16,7 +16,7 @@ class Proxmox extends Module
     /**
      * @var string The version of this module
      */
-    private static $version = '2.4.0';
+    private static $version = '2.4.1';
     /**
      * @var string The authors of this module
      */
