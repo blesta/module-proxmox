@@ -2244,7 +2244,9 @@ class Proxmox extends Module
                 }
 
                 $errors = $response->errors();
-                $error = isset($errors->statusmsg) ? $errors->statusmsg : '';
+                $error = isset($errors->statusmsg)
+                    ? $errors->statusmsg
+                    : Language::_('Proxmox.!error.api.unknown', true);
                 $this->Input->setErrors(['api' => ['response' => $this->Html->safe($error)]]);
                 break;
             default:

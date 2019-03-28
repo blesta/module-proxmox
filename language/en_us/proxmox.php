@@ -29,6 +29,7 @@ $lang['Proxmox.!error.meta[netspeed].format'] = 'Please set NetSpeed.';
 $lang['Proxmox.!error.meta[set_template].format'] = 'Please set whether to select a template or to allow clients to set a template.';
 $lang['Proxmox.!error.meta[template].empty'] = 'Please select a template.';
 
+$lang['Proxmox.!error.api.unknown'] = 'An unkown error occurred, please try again later.';
 $lang['Proxmox.!error.api.internal'] = 'An internal error occurred, or the server did not respond to the request.';
 
 $lang['Proxmox.!error.proxmox_hostname.format'] = 'The hostname appears to be invalid.';
