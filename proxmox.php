@@ -16,7 +16,7 @@ class Proxmox extends Module
     /**
      * @var string The version of this module
      */
-    private static $version = '2.4.0';
+    private static $version = '2.4.1';
     /**
      * @var string The authors of this module
      */
@@ -2244,7 +2244,9 @@ class Proxmox extends Module
                 }
 
                 $errors = $response->errors();
-                $error = isset($errors->statusmsg) ? $errors->statusmsg : '';
+                $error = isset($errors->statusmsg)
+                    ? $errors->statusmsg
+                    : Language::_('Proxmox.!error.api.unknown', true);
                 $this->Input->setErrors(['api' => ['response' => $this->Html->safe($error)]]);
                 break;
             default:
@@ -2424,7 +2426,7 @@ class Proxmox extends Module
             ],
             'storage' => [
                 'format' => [
-                    'rule' => ['matches', '/^[0-9a-zA-Z]+$/'],
+                    'rule' => ['matches', '/^[0-9a-zA-Z\-]+$/'],
                     'message' => Language::_('Proxmox.!error.storage.format', true)
                 ]
             ],
