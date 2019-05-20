@@ -16,7 +16,7 @@ class Proxmox extends Module
     /**
      * @var string The version of this module
      */
-    private static $version = '2.4.1';
+    private static $version = '2.5.0';
     /**
      * @var string The authors of this module
      */
@@ -2074,7 +2074,7 @@ class Proxmox extends Module
      * @param stdClass $module_row An stdClass object representing the module row
      * @return string The name of the selected node
      */
-    private function chooseNode($nodes, $module_row)
+    private function chooseNode(array $nodes, $module_row)
     {
         $node = '';
 
