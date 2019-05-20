@@ -14,7 +14,7 @@
             <h3><?php $this->_('Proxmox.manage.module_rows_title');?></h3>
         </div>
         <?php
-        $num_rows = count($this->Html->ifSet($module->rows));
+        $num_rows = count($this->Html->ifSet($module->rows, []));
         if ($num_rows > 0) {
         ?>
         <table class="table">
@@ -62,7 +62,7 @@
             <h3><?php $this->_('Proxmox.manage.module_groups_title');?></h3>
         </div>
         <?php
-        $num_rows = count($this->Html->ifSet($module->groups));
+        $num_rows = count($this->Html->ifSet($module->groups, []));
         if ($num_rows > 0) {
         ?>
         <table class="table">
