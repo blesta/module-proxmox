@@ -1,0 +1,27 @@
+{
+    "version": "2.7.0",
+    "name": "Proxmox.name",
+    "description": "Proxmox.description",
+    "authors": [
+        {
+            "name": "Phillips Data, Inc.",
+            "url": "http://www.blesta.com"
+        },
+        {
+            "name": "Full Ambit Networks",
+            "url": "https://fullambit.net"
+        }
+    ],
+    "service": {
+        "name_key": "proxmox_hostname"
+    },
+    "module": {
+        "row": "Proxmox.module_row",
+        "rows": "Proxmox.module_row_plural",
+        "row_key": "server_name",
+        "group": "Proxmox.module_group"
+    },
+    "service": {
+        "name_key": "proxmox_hostname"
+    }
+}

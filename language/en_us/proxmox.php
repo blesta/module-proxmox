@@ -51,6 +51,7 @@ $lang['Proxmox.!percent.used'] = '%1$s%'; // %1$s is a percentage value
 
 // Basics
 $lang['Proxmox.name'] = 'Proxmox';
+$lang['Proxmox.description'] = 'Proxmox Virtual Environment is an open-source server virtualization environment. It is a Debian-based Linux distribution with a modified Ubuntu LTS kernel and allows deployment and management of virtual machines and containers.';
 $lang['Proxmox.module_row'] = 'Proxmox Master Server';
 $lang['Proxmox.module_row_plural'] = 'Servers';
 $lang['Proxmox.module_group'] = 'Proxmox Master Group';
