@@ -15,133 +15,18 @@ use Blesta\Core\Util\Validate\Server;
 class Proxmox extends Module
 {
     /**
-     * @var string The version of this module
-     */
-    private static $version = '2.6.0';
-    /**
-     * @var string The authors of this module
-     */
-    private static $authors = [
-        ['name' => 'Phillips Data, Inc.', 'url' => 'http://www.blesta.com'],
-        ['name' => 'Full Ambit Networks', 'url' => 'https://fullambit.net']
-    ];
-
-    /**
      * Initializes the module
      */
     public function __construct()
     {
+        // Load configuration required by this module
+        $this->loadConfig(dirname(__FILE__) . DS . 'config.json');
+
         // Load components required by this module
         Loader::loadComponents($this, ['Input']);
 
         // Load the language required by this module
         Language::loadLang('proxmox', null, dirname(__FILE__) . DS . 'language' . DS);
-    }
-
-    /**
-     * Returns the name of this module
-     *
-     * @return string The common name of this module
-     */
-    public function getName()
-    {
-        return Language::_('Proxmox.name', true);
-    }
-
-    /**
-     * Returns the version of this module
-     *
-     * @return string The current version of this module
-     */
-    public function getVersion()
-    {
-        return self::$version;
-    }
-
-    /**
-     * Returns the name and URL for the authors of this module
-     *
-     * @return array A numerically indexed array that contains an array with key/value
-     *  pairs for 'name' and 'url', representing the name and URL of the authors of this module
-     */
-    public function getAuthors()
-    {
-        return self::$authors;
-    }
-
-    /**
-     * Returns the value used to identify a particular service
-     *
-     * @param stdClass $service A stdClass object representing the service
-     * @return string A value used to identify this service amongst other similar services
-     */
-    public function getServiceName($service)
-    {
-        foreach ($service->fields as $field) {
-            if ($field->key == 'proxmox_hostname') {
-                return $field->value;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns a noun used to refer to a module row (e.g. "Server", "VPS", "Reseller Account", etc.)
-     *
-     * @return string The noun used to refer to a module row
-     */
-    public function moduleRowName()
-    {
-        return Language::_('Proxmox.module_row', true);
-    }
-
-    /**
-     * Returns a noun used to refer to a module row in plural form (e.g. "Servers", "VPSs", "Reseller Accounts", etc.)
-     *
-     * @return string The noun used to refer to a module row in plural form
-     */
-    public function moduleRowNamePlural()
-    {
-        return Language::_('Proxmox.module_row_plural', true);
-    }
-
-    /**
-     * Returns a noun used to refer to a module group (e.g. "Server Group", "Cloud", etc.)
-     *
-     * @return string The noun used to refer to a module group
-     */
-    public function moduleGroupName()
-    {
-        return Language::_('Proxmox.module_group', true);
-    }
-
-    /**
-     * Returns the key used to identify the primary field from the set of module row meta fields.
-     * This value can be any of the module row meta fields.
-     *
-     * @return string The key used to identify the primary field from the set of module row meta fields
-     */
-    public function moduleRowMetaKey()
-    {
-        return 'server_name';
-    }
-
-    /**
-     * Returns the value used to identify a particular package service which has
-     * not yet been made into a service. This may be used to uniquely identify
-     * an uncreated service of the same package (i.e. in an order form checkout)
-     *
-     * @param stdClass $package A stdClass object representing the selected package
-     * @param array $vars An array of user supplied info to satisfy the request
-     * @return string The value used to identify this package service
-     * @see Module::getServiceName()
-     */
-    public function getPackageServiceName($packages, array $vars = null)
-    {
-        if (isset($vars['proxmox_hostname'])) {
-            return $vars['proxmox_hostname'];
-        }
-        return null;
     }
 
     /**
@@ -1064,33 +949,6 @@ class Proxmox extends Module
         $fields->setField($netspeed);
 
         return $fields;
-    }
-
-    /**
-     * Returns an array of key values for fields stored for a module, package,
-     * and service under this module, used to substitute those keys with their
-     * actual module, package, or service meta values in related emails.
-     *
-     * @return array A multi-dimensional array of key/value pairs where each key
-     *  is one of 'module', 'package', or 'service' and each value is a numerically
-     *  indexed array of key values that match meta fields under that category.
-     * @see Modules::addModuleRow()
-     * @see Modules::editModuleRow()
-     * @see Modules::addPackage()
-     * @see Modules::editPackage()
-     * @see Modules::addService()
-     * @see Modules::editService()
-     */
-    public function getEmailTags()
-    {
-        return [
-            'module' => ['host', 'port'],
-            'package' => [],
-            'service' => ['proxmox_vserver_id', 'proxmox_hostname',
-                'proxmox_node', 'proxmox_username', 'proxmox_password', 'proxmox_memory', 'proxmox_hdd', 'proxmox_cpu',
-                'proxmox_type', 'proxmox_netspeed'
-            ]
-        ];
     }
 
     /**
