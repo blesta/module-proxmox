@@ -15,7 +15,7 @@
     }
     ?>
     <span class="label label-<?php $this->Html->_($status_class);?>">
-        <i class="fa fa-lightbulb-o"></i> <?php $this->_('Proxmox.tab_client_actions.status_' . $this->Html->_($server->status, true));?>
+        <i class="fas fa-lightbulb"></i> <?php $this->_('Proxmox.tab_client_actions.status_' . $this->Html->_($server->status, true));?>
     </span>
     <hr />
     <h4><?php $this->_('Proxmox.tab_client_actions.heading_actions');?></h4>
@@ -23,23 +23,23 @@
     <div class="row options">
         <div class="col-md-4">
             <a<?php echo $this->Html->ifSet($server->status) != 'running' ? ' disabled="disabled"' : '';?> class="btn btn-default btn-block btn-danger" href="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . $this->Html->ifSet($service_id) . '/tabClientActions/shutdown/');?>">
-                <i class="fa fa-power-off"></i> <?php $this->_('Proxmox.!actions.shutdown');?>
+                <i class="fas fa-power-off"></i> <?php $this->_('Proxmox.!actions.shutdown');?>
             </a>
             <a<?php echo $this->Html->ifSet($type) == 'qemu' ? ' disabled="disabled"' : '';?> class="reinstall btn btn-default btn-block" href="#">
-                <i class="fa fa-download"></i> <?php $this->_('Proxmox.!actions.reinstall');?>
+                <i class="fas fa-download"></i> <?php $this->_('Proxmox.!actions.reinstall');?>
             </a>
         </div>
         <div class="col-md-4">
             <a<?php echo $this->Html->ifSet($server->status) != 'stopped' ? ' disabled="disabled"' : '';?> class="btn btn-default btn-block" href="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . $this->Html->ifSet($service_id) . '/tabClientActions/boot/');?>">
-                <i class="fa fa-power-off"></i> <?php $this->_('Proxmox.!actions.boot');?>
+                <i class="fas fa-power-off"></i> <?php $this->_('Proxmox.!actions.boot');?>
             </a>
             <a<?php echo $this->Html->ifSet($type) != 'qemu' ? ' disabled="disabled"' : '';?> class="mount_iso btn btn-default btn-block" href="#">
-                <i class="fa fa-link"></i> <?php $this->_('Proxmox.!actions.mount_iso');?>
+                <i class="fas fa-link"></i> <?php $this->_('Proxmox.!actions.mount_iso');?>
             </a>
         </div>
         <div class="col-md-4">
             <a<?php echo $this->Html->ifSet($type) != 'qemu' ? ' disabled="disabled"' : '';?> class="btn btn-default btn-block" href="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . $this->Html->ifSet($service_id) . '/tabClientActions/unmount/');?>">
-                <i class="fa fa-unlink"></i> <?php $this->_('Proxmox.!actions.unmount_iso');?>
+                <i class="fas fa-unlink"></i> <?php $this->_('Proxmox.!actions.unmount_iso');?>
             </a>
         </div>
     </div>
@@ -62,7 +62,7 @@
             </div>
         </div>
         <button class="btn btn-default pull-right">
-            <i class="fa fa-link"></i> <?php $this->_('Proxmox.tab_client_actions.field_mount_submit');?>
+            <i class="fas fa-link"></i> <?php $this->_('Proxmox.tab_client_actions.field_mount_submit');?>
         </button>
         <?php
         $this->Form->end();
@@ -91,7 +91,7 @@
             </div>
         </div>
         <button class="btn btn-default pull-right">
-            <i class="fa fa-download"></i> <?php $this->_('Proxmox.tab_client_actions.field_reinstall_submit');?>
+            <i class="fas fa-download"></i> <?php $this->_('Proxmox.tab_client_actions.field_reinstall_submit');?>
         </button>
         <?php
         $this->Form->end();
