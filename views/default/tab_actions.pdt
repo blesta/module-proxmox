@@ -52,7 +52,7 @@
         </div>
         <div class="button_row">
             <?php
-            $this->Form->fieldSubmit('save', $this->_('Proxmox.tab_actions.field_mount_submit', true), ['class' => 'btn btn-primary pull-right']);
+            $this->Form->fieldSubmit('save', $this->_('Proxmox.tab_actions.field_mount_submit', true), ['class' => 'btn btn-primary float-right']);
             ?>
         </div>
         <?php
@@ -86,7 +86,7 @@
         </div>
         <div class="button_row">
             <?php
-            $this->Form->fieldSubmit('save', $this->_('Proxmox.tab_actions.field_reinstall_submit', true), ['class' => 'btn btn-primary pull-right']);
+            $this->Form->fieldSubmit('save', $this->_('Proxmox.tab_actions.field_reinstall_submit', true), ['class' => 'btn btn-primary float-right']);
             ?>
         </div>
         <?php
