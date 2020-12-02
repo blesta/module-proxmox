@@ -14,7 +14,7 @@
             break;
     }
     ?>
-    <span class="badge badge-<?php $this->Html->_($status_class);?>">
+    <span class="badge badge-<?php $this->Html->_($status_class);?> mb-3">
         <i class="fas fa-lightbulb"></i> <?php $this->_('Proxmox.tab_client_actions.status_' . $this->Html->_($server->status, true));?>
     </span>
     <hr />
