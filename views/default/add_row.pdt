@@ -14,25 +14,25 @@
                     <li>
                         <?php
                         $this->Form->label($this->_('Proxmox.row_meta.server_name', true), 'server_name');
-                        $this->Form->fieldText('server_name', $this->Html->ifSet($vars->server_name), ['id' => 'server_name']);
+                        $this->Form->fieldText('server_name', (isset($vars->server_name) ? $vars->server_name : null), ['id' => 'server_name']);
                         ?>
                     </li>
                     <li>
                         <?php
                         $this->Form->label($this->_('Proxmox.row_meta.user', true), 'user');
-                        $this->Form->fieldText('user', $this->Html->ifSet($vars->user), ['id' => 'user']);
+                        $this->Form->fieldText('user', (isset($vars->user) ? $vars->user : null), ['id' => 'user']);
                         ?>
                     </li>
                     <li>
                         <?php
                         $this->Form->label($this->_('Proxmox.row_meta.password', true), 'password');
-                        $this->Form->fieldText('password', $this->Html->ifSet($vars->password), ['id' => 'password']);
+                        $this->Form->fieldText('password', (isset($vars->password) ? $vars->password : null), ['id' => 'password']);
                         ?>
                     </li>
                     <li>
                         <?php
                         $this->Form->label($this->_('Proxmox.row_meta.host', true), 'host');
-                        $this->Form->fieldText('host', $this->Html->ifSet($vars->host), ['id' => 'host']);
+                        $this->Form->fieldText('host', (isset($vars->host) ? $vars->host : null), ['id' => 'host']);
                         ?>
                     </li>
                     <li>
@@ -56,13 +56,13 @@
                     <li>
                         <?php
                         $this->Form->label($this->_('Proxmox.row_meta.default_template', true), 'default_template');
-                        $this->Form->fieldText('default_template', $this->Html->ifSet($vars->default_template), ['id' => 'default_template']);
+                        $this->Form->fieldText('default_template', (isset($vars->default_template) ? $vars->default_template : null), ['id' => 'default_template']);
                         ?>
                     </li>
                     <li>
                         <?php
                         $this->Form->label($this->_('Proxmox.row_meta.ips', true), 'ips');
-                        $this->Form->fieldTextarea('ips', $this->Html->ifSet($vars->ips), ['id' => 'ips']);
+                        $this->Form->fieldTextarea('ips', (isset($vars->ips) ? $vars->ips : null), ['id' => 'ips']);
                         ?>
                     </li>
                 </ul>

@@ -824,7 +824,7 @@ class Proxmox extends Module
 						'
                         . $this->Form->fieldMultiSelect(
                             'meta[nodes][]',
-                            $this->Html->ifSet($vars->meta['nodes'], []),
+                            (isset($vars->meta['nodes']) ? $vars->meta['nodes'] : []),
                             [],
                             ['id' => 'assigned_nodes']
                         )
@@ -835,7 +835,7 @@ class Proxmox extends Module
 						'
                         . $this->Form->fieldMultiSelect(
                             'available_nodes[]',
-                            $this->Html->ifSet($nodes, []),
+                            (isset($nodes) ? $nodes : []),
                             [],
                             ['id' => 'available_nodes']
                         )
@@ -897,7 +897,7 @@ class Proxmox extends Module
             $fields->fieldSelect(
                 'meta[type]',
                 $types,
-                $this->Html->ifSet($vars->meta['type']),
+                (isset($vars->meta['type']) ? $vars->meta['type'] : null),
                 ['id' => 'proxmox_type']
             )
         );
@@ -909,7 +909,7 @@ class Proxmox extends Module
         $hdd->attach(
             $fields->fieldText(
                 'meta[hdd]',
-                $this->Html->ifSet($vars->meta['hdd']),
+                (isset($vars->meta['hdd']) ? $vars->meta['hdd'] : null),
                 ['id' => 'proxmox_hdd']
             )
         );
@@ -920,7 +920,7 @@ class Proxmox extends Module
         $memory->attach(
             $fields->fieldText(
                 'meta[memory]',
-                $this->Html->ifSet($vars->meta['memory']),
+                (isset($vars->meta['memory']) ? $vars->meta['memory'] : null),
                 ['id' => 'proxmox_memory']
             )
         );
@@ -931,7 +931,7 @@ class Proxmox extends Module
         $cpu->attach(
             $fields->fieldText(
                 'meta[cpu]',
-                $this->Html->ifSet($vars->meta['cpu']),
+                (isset($vars->meta['cpu']) ? $vars->meta['cpu'] : null),
                 ['id' => 'proxmox_cpu']
             )
         );
@@ -942,7 +942,7 @@ class Proxmox extends Module
         $netspeed->attach(
             $fields->fieldText(
                 'meta[netspeed]',
-                $this->Html->ifSet($vars->meta['netspeed']),
+                (isset($vars->meta['netspeed']) ? $vars->meta['netspeed'] : null),
                 ['id' => 'proxmox_netspeed']
             )
         );
@@ -977,7 +977,7 @@ class Proxmox extends Module
         $host_name->attach(
             $fields->fieldText(
                 'proxmox_hostname',
-                $this->Html->ifSet($vars->proxmox_hostname),
+                (isset($vars->proxmox_hostname) ? $vars->proxmox_hostname : null),
                 ['id' => 'proxmox_hostname']
             )
         );
@@ -1292,7 +1292,7 @@ class Proxmox extends Module
                         $service_fields->proxmox_type,
                         $service_fields->proxmox_node,
                         $module_row,
-                        ['iso' => $this->Html->ifSet($post['iso'])]
+                        ['iso' => (isset($post['iso']) ? $post['iso'] : null)]
                     );
                     break;
                 case 'unmount':

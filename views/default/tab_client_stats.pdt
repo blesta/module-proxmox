@@ -6,7 +6,7 @@
             $graph_keys = ['mem,maxmem', 'cpu', 'netin,netout', 'diskread,diskwrite'];
             foreach ($graph_keys as $value) {
             ?>
-            <p><img src="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . $this->Html->ifSet($service_id) . '/tabClientStats/' . $value); ?>" /></p>
+            <p><img src="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . (isset($service_id) ? $service_id : null) . '/tabClientStats/' . $value); ?>" /></p>
             <?php
             }
             ?>

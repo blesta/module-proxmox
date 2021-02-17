@@ -7,7 +7,7 @@
             <?php
             $keys = ['mem_formatted' => 'memory'];
             foreach ($keys as $key => $name) {
-                if ($this->Html->ifSet($server->{$key}, false)) {
+                if ((isset($server->{$key}) ? $server->{$key} : false)) {
                     $percent_used = $this->Html->_($server->{$key}['percent_used_' . $name], true);
             ?>
             <li>
@@ -30,7 +30,7 @@
         $graph_keys = ['mem,maxmem', 'cpu', 'netin,netout', 'diskread,diskwrite'];
         foreach ($graph_keys as $value) {
         ?>
-        <p><img src="<?php echo $this->Html->safe($this->base_uri . 'clients/servicetab/' . $this->Html->ifSet($client_id) . '/' . $this->Html->ifSet($service_id) . '/tabStats/' . $value); ?>" /></p>
+        <p><img src="<?php echo $this->Html->safe($this->base_uri . 'clients/servicetab/' . (isset($client_id) ? $client_id : null) . '/' . (isset($service_id) ? $service_id : null) . '/tabStats/' . $value); ?>" /></p>
         <?php
         }
         ?>
