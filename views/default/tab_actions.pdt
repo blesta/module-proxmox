@@ -6,7 +6,7 @@
     <div class="pad">
         <div class="options">
             <div class="status">
-                <p><?php $this->_('Proxmox.tab_actions.server_status');?> <span class="buff <?php $this->Html->_($server->status);?>"><?php $this->_('Proxmox.tab_actions.status_' . $this->Html->_($server->status, true));?></span></p>
+                <p><?php $this->_('Proxmox.tab_actions.server_status');?> <span class="buff <?php (echo isset($server->status) ? $this->Html->safe($server->status) : null);?>"><?php $this->_('Proxmox.tab_actions.status_' . (isset($server->status) ? $this->Html->safe($server->status) : null));?></span></p>
             </div>
             <?php
             if ((isset($server->status) ? $server->status : null) == 'running') {

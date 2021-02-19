@@ -6,7 +6,7 @@
         </tr>
         <tr>
             <td></td>
-            <td><?php $this->Html->_($service_fields->proxmox_username);?></td>
-            <td><?php $this->Html->_($service_fields->proxmox_ip);?></td>
+            <td><?php (echo isset($service_fields->proxmox_username) ? $this->Html->safe($service_fields->proxmox_username) : null);?></td>
+            <td><?php (echo isset($service_fields->proxmox_ip) ? $this->Html->safe($service_fields->proxmox_ip) : null);?></td>
         </tr>
     </table>

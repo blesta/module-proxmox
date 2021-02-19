@@ -2,7 +2,7 @@
     <h4><?php $this->_('Proxmox.tab_client_actions.heading_server_status');?></h4>
     <?php
     $status_class = 'default';
-    switch ($this->Html->_($server->status, true)) {
+    switch ((isset($server->status) ? $this->Html->safe($server->status) : null)) {
         case 'running':
             $status_class = 'success';
             break;
@@ -14,8 +14,8 @@
             break;
     }
     ?>
-    <span class="badge badge-<?php $this->Html->_($status_class);?> mb-3">
-        <i class="fas fa-lightbulb"></i> <?php $this->_('Proxmox.tab_client_actions.status_' . $this->Html->_($server->status, true));?>
+    <span class="badge badge-<?php (echo isset($status_class) ? $this->Html->safe($status_class) : null);?> mb-3">
+        <i class="fas fa-lightbulb"></i> <?php $this->_('Proxmox.tab_client_actions.status_' . (isset($server->status) ? $this->Html->safe($server->status) : null));?>
     </span>
     <hr />
     <h4><?php $this->_('Proxmox.tab_client_actions.heading_actions');?></h4>
