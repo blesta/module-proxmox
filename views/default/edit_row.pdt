@@ -38,19 +38,19 @@
                     <li>
                         <?php
                         $this->Form->label($this->_('Proxmox.row_meta.port', true), 'port');
-                        $this->Form->fieldText('port', $this->Html->ifSet($vars->port, $this->_('Proxmox.row_meta.default_port', true)), ['id' => 'port']);
+                        $this->Form->fieldText('port', (isset($vars->port) ? $vars->port : $this->_('Proxmox.row_meta.default_port', true)), ['id' => 'port']);
                         ?>
                     </li>
                     <li>
                         <?php
                         $this->Form->label($this->_('Proxmox.row_meta.storage', true), 'storage');
-                        $this->Form->fieldText('storage', $this->Html->ifSet($vars->storage, $this->_('Proxmox.row_meta.default_storage', true)), ['id' => 'storage']);
+                        $this->Form->fieldText('storage', (isset($vars->storage) ? $vars->storage : $this->_('Proxmox.row_meta.default_storage', true)), ['id' => 'storage']);
                         ?>
                     </li>
                     <li>
                         <?php
                         $this->Form->label($this->_('Proxmox.row_meta.vmid', true), 'vmid');
-                        $this->Form->fieldText('vmid', $this->Html->ifSet($vars->vmid, $this->_('Proxmox.row_meta.default_vmid', true)), ['id' => 'vmid']);
+                        $this->Form->fieldText('vmid', (isset($vars->vmid) ? $vars->vmid : $this->_('Proxmox.row_meta.default_vmid', true)), ['id' => 'vmid']);
                         ?>
                     </li>
                     <li>

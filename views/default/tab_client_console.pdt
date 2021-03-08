@@ -5,19 +5,19 @@
             <tbody>
                 <tr>
                     <td><strong><?php $this->_('Proxmox.tab_client_console.vnc_ip');?></strong></td>
-                    <td><?php (echo isset($console->vnc_ip) ? $this->Html->safe($console->vnc_ip) : null);?></td>
+                    <td><?php echo (isset($console->vnc_ip) ? $this->Html->safe($console->vnc_ip) : null);?></td>
                 </tr>
                 <tr>
                     <td><strong><?php $this->_('Proxmox.tab_client_console.vnc_port');?></strong></td>
-                    <td><?php (echo isset($console->vnc_port) ? $this->Html->safe($console->vnc_port) : null);?></td>
+                    <td><?php echo (isset($console->vnc_port) ? $this->Html->safe($console->vnc_port) : null);?></td>
                 </tr>
                 <tr>
                     <td><strong><?php $this->_('Proxmox.tab_client_console.vnc_user');?></strong></td>
-                    <td><?php (echo isset($console->vnc_user) ? $this->Html->safe($console->vnc_user) : null);?></td>
+                    <td><?php echo (isset($console->vnc_user) ? $this->Html->safe($console->vnc_user) : null);?></td>
                 </tr>
                 <tr>
                     <td><strong><?php $this->_('Proxmox.tab_client_console.vnc_password');?></strong></td>
-                    <td><?php (echo isset($console->vnc_password) ? $this->Html->safe($console->vnc_password) : null);?></td>
+                    <td><?php echo (isset($console->vnc_password) ? $this->Html->safe($console->vnc_password) : null);?></td>
                 </tr>
             </tbody>
         </table>

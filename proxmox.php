@@ -1013,7 +1013,7 @@ class Proxmox extends Module
         $host_name->attach(
             $fields->fieldText(
                 'proxmox_hostname',
-                $this->Html->ifSet($vars->proxmox_hostname, $this->Html->ifSet($vars->domain)),
+                (isset($vars->proxmox_hostname) ? $vars->proxmox_hostname : ($vars->domain ?? null)),
                 ['id' => 'proxmox_hostname']
             )
         );
