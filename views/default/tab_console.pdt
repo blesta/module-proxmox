@@ -4,10 +4,10 @@
     </div>
     <div class="pad">
         <ul>
-            <li><?php $this->_('Proxmox.tab_console.vnc_ip');?> <?php $this->Html->_($console->vnc_ip);?></li>
-            <li><?php $this->_('Proxmox.tab_console.vnc_port');?> <?php $this->Html->_($console->vnc_port);?></li>
-            <li><?php $this->_('Proxmox.tab_console.vnc_user');?> <?php $this->Html->_($console->vnc_user);?></li>
-            <li><?php $this->_('Proxmox.tab_console.vnc_password');?> <?php $this->Html->_($console->vnc_password);?></li>
+            <li><?php $this->_('Proxmox.tab_console.vnc_ip');?> <?php echo (isset($console->vnc_ip) ? $this->Html->safe($console->vnc_ip) : null);?></li>
+            <li><?php $this->_('Proxmox.tab_console.vnc_port');?> <?php echo (isset($console->vnc_port) ? $this->Html->safe($console->vnc_port) : null);?></li>
+            <li><?php $this->_('Proxmox.tab_console.vnc_user');?> <?php echo (isset($console->vnc_user) ? $this->Html->safe($console->vnc_user) : null);?></li>
+            <li><?php $this->_('Proxmox.tab_console.vnc_password');?> <?php echo (isset($console->vnc_password) ? $this->Html->safe($console->vnc_password) : null);?></li>
         </ul>
     </div>
 

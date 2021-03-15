@@ -7,12 +7,12 @@
             <?php
             $keys = ['mem_formatted' => 'memory'];
             foreach ($keys as $key => $name) {
-                if ($this->Html->ifSet($server->{$key}, false)) {
-                    $percent_used = $this->Html->_($server->{$key}['percent_used_' . $name], true);
+                if ((isset($server->{$key}) ? $server->{$key} : false)) {
+                    $percent_used = (isset($server->{$key}['percent_used_' . $name]) ? $this->Html->safe($server->{$key}['percent_used_' . $name]) : null);
             ?>
             <li>
                 <?php $this->_('Proxmox.tab_stats.' . $name);?>
-                <span class="buff <?php echo $percent_used > 80 ? 'stopped' : 'running';?>"><?php $this->_('Proxmox.tab_stats.' . $name . '_stats', false, $this->Html->_($server->{$key}['used_' . $name . '_formatted'], true), $this->Html->_($server->{$key}['total_' . $name . '_formatted'], true));?></span>
+                <span class="buff <?php echo $percent_used > 80 ? 'stopped' : 'running';?>"><?php $this->_('Proxmox.tab_stats.' . $name . '_stats', false, (isset($server->{$key}['used_' . $name . '_formatted']) ? $this->Html->safe($server->{$key}['used_' . $name . '_formatted']) : null), (isset($server->{$key}['total_' . $name . '_formatted']) ? $this->Html->safe($server->{$key}['total_' . $name . '_formatted']) : null));?></span>
                 <?php $this->_('Proxmox.tab_stats.' . $name . '_percent_available', false, $percent_used);?>
             </li>
             <?php
@@ -30,7 +30,7 @@
         $graph_keys = ['mem,maxmem', 'cpu', 'netin,netout', 'diskread,diskwrite'];
         foreach ($graph_keys as $value) {
         ?>
-        <p><img src="<?php echo $this->Html->safe($this->base_uri . 'clients/servicetab/' . $this->Html->ifSet($client_id) . '/' . $this->Html->ifSet($service_id) . '/tabStats/' . $value); ?>" /></p>
+        <p><img src="<?php echo $this->Html->safe($this->base_uri . 'clients/servicetab/' . (isset($client_id) ? $client_id : null) . '/' . (isset($service_id) ? $service_id : null) . '/tabStats/' . $value); ?>" /></p>
         <?php
         }
         ?>
