@@ -1,4 +1,6 @@
 <?php
+use Blesta\Core\Util\Common\Traits\Container;
+
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'proxmox_response.php';
 
 /**
@@ -12,6 +14,9 @@ require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'proxmox_response.php';
  */
 class ProxmoxApi
 {
+    // Load traits
+    use Container;
+
     /**
      * @var string The user to connect as
      */
@@ -63,6 +68,10 @@ class ProxmoxApi
         $this->host = $host;
         $this->port = $port;
 
+        // Initialize logger
+        $logger = $this->getFromContainer('logger');
+        $this->logger = $logger;
+
         $this->login();
     }
 
@@ -98,7 +107,7 @@ class ProxmoxApi
 
         $ch = curl_init();
 
-        //We need to do this manually to avoid multipart/form-data which Proxmox does not like
+        // We need to do this manually to avoid multipart/form-data which Proxmox does not like
         $postfields = [];
         foreach ($args as $arg_name => $arg_value) {
             $postfields[] = urlencode($arg_name) . '=' . urlencode($arg_value);
@@ -113,10 +122,15 @@ class ProxmoxApi
         }
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
+        if (Configure::get('Blesta.curl_verify_ssl')) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, true);
+        } else {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        }
 
         if ($include_login) {
             curl_setopt($ch, CURLOPT_COOKIE, 'PVEAuthCookie=' . $this->ticket);
@@ -131,6 +145,11 @@ class ProxmoxApi
         curl_setopt($ch, CURLOPT_HTTPHEADER, $additional_header);
 
         $response = curl_exec($ch);
+
+        if ($response == false) {
+            $this->logger->error(curl_error($ch));
+        }
+
         curl_close($ch);
 
         return new ProxmoxResponse($response);
