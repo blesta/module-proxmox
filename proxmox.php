@@ -130,6 +130,7 @@ class Proxmox extends Module
         $params['vmid'] = '';
         $params['storage'] = $row->meta->storage;
         $params['ip'] = '';
+        $params['gateway'] = $row->meta->gateway;
 
         // Validate the service-specific fields
         $this->validateService($package, $vars);
@@ -242,6 +243,16 @@ class Proxmox extends Module
                 'encrypted' => 0
             ],
             [
+                'key' => 'proxmox_storage',
+                'value' => $params['storage'],
+                'encrypted' => 0
+            ],
+            [
+                'key' => 'proxmox_gateway',
+                'value' => $params['gateway'],
+                'encrypted' => 0
+            ],
+            [
                 'key' => 'proxmox_netspeed',
                 'value' => $params['netspeed'],
                 'encrypted' => 0
@@ -336,7 +347,10 @@ class Proxmox extends Module
 
                 // Terminate the Virtual Server
                 $this->log($row->meta->host . '|vserver-terminate', serialize($params), 'input', true);
-                $response = $this->parseResponse($vserver_api->terminate($params), $row);
+                if($service_fields->proxmox_type != 'qemu'){
+                    $this->parseResponse($vserver_api->shutdown($params), $row);
+                }
+                $this->parseResponse($vserver_api->terminate($params), $row);
             } catch (Exception $e) {
                 // Internal Error
                 $this->Input->setErrors(['api' => ['internal' => Language::_('Proxmox.!error.api.internal', true)]]);
@@ -665,7 +679,7 @@ class Proxmox extends Module
      */
     public function addModuleRow(array &$vars)
     {
-        $meta_fields = ['server_name', 'user', 'password', 'host', 'port',
+        $meta_fields = ['server_name', 'user', 'password', 'host', 'port', 'gateway',
             'vmid', 'storage', 'default_template', 'ips'
         ];
         $encrypted_fields = ['user', 'password'];
@@ -981,8 +995,17 @@ class Proxmox extends Module
                 ['id' => 'proxmox_hostname']
             )
         );
+        $password = $fields->label(Language::_('Proxmox.service_field.proxmox_password', true), 'password');
+        $password->attach(
+            $fields->fieldText(
+                'password',
+                (isset($vars->password['password']) ? $vars->password['password'] : null),
+                ['id' => 'password']
+            )
+        );
         // Set the label as a field
         $fields->setField($host_name);
+        $fields->setField($password);
 
         return $fields;
     }
@@ -1017,8 +1040,17 @@ class Proxmox extends Module
                 ['id' => 'proxmox_hostname']
             )
         );
+        $password = $fields->label(Language::_('Proxmox.service_field.proxmox_password', true), 'password');
+        $password->attach(
+            $fields->fieldText(
+                'proxmox_password',
+                (isset($vars->proxmox_password) ? $vars->proxmox_password : null),
+                ['id' => 'password']
+            )
+        );
         // Set the label as a field
         $fields->setField($host_name);
+        $fields->setField($password);
 
         return $fields;
     }
@@ -1308,7 +1340,7 @@ class Proxmox extends Module
                     );
                     break;
                 case 'reinstall':
-                    if ($service_fields->proxmox_type != 'openvz') {
+                    if ($service_fields->proxmox_type != 'lxc') {
                         break;
                     }
 
@@ -1341,15 +1373,17 @@ class Proxmox extends Module
 
                     $params = [
                         'type' => $service_fields->proxmox_type,
-                        'template' => (isset($post['template']) ? $post['template'] : ''),
+                        'template' => str_replace("local:vztmpl/", '', (isset($post['template']) ? $post['template'] : '')),
                         'node' => $service_fields->proxmox_node,
                         'hostname' => $service_fields->proxmox_hostname,
                         'userid' => $service_fields->proxmox_username,
-                        'password' => (isset($post['password']) ? $post['password'] : ''), // root password
+                        'password' => (isset($post['password']) ? $post['password'] : null),
                         'memory' => $service_fields->proxmox_memory,
                         'hdd' => $service_fields->proxmox_hdd,
+                        'storage' => $service_fields->proxmox_storage,
                         'sockets' => $service_fields->proxmox_cpu,
                         'netspeed' => $service_fields->proxmox_netspeed,
+                        'gateway' => $service_fields->proxmox_gateway,
                         'vmid' => $service_fields->proxmox_vserver_id,
                         'ip' => $service_fields->proxmox_ip
                     ];
@@ -1357,7 +1391,13 @@ class Proxmox extends Module
                     // Load the vserver API
                     $api->loadCommand('proxmox_vserver');
                     $server_api = new ProxmoxVserver($api);
-                    $server_api->create($params);
+                    // $server_api->create($params);
+                    if (($row = $this->getModuleRow())) {
+                        $masked_params = $params;
+                        $masked_params['password'] = '***';
+                        $this->log($row->meta->host . '|vserver-create', serialize($masked_params), 'input', true);
+                        $response = $this->parseResponse($server_api->create($params), $row);
+                    }
 
                     break;
                 default:
@@ -1861,7 +1901,7 @@ class Proxmox extends Module
     /**
      * Fetches the nodes available for the Proxmox server of the given type
      *
-     * @param string $type The type of server (i.e. openvz, qemu)
+     * @param string $type The type of server (i.e. lxc, qemu)
      * @param stdClass $module_row A stdClass object representing a single server
      * @return array A list of nodes
      */
@@ -1916,7 +1956,7 @@ class Proxmox extends Module
             'node' => $node,
             'hostname' => isset($vars['proxmox_hostname']) ? strtolower($vars['proxmox_hostname']) : null,
             'userid' => isset($vars['client_id']) ? 'vmuser' . $vars['client_id'] : null,
-            'password' => $this->generatePassword(), // root password
+            'password'=> $vars['password'],
             'memory' => $package->meta->memory,
             'hdd' => $package->meta->hdd,
             'sockets' => $package->meta->cpu,
@@ -2204,7 +2244,7 @@ class Proxmox extends Module
     private function getTypes()
     {
         return [
-            'openvz' => Language::_('Proxmox.types.openvz', true),
+            'lxc' => Language::_('Proxmox.types.lxc', true),
             'qemu' => Language::_('Proxmox.types.kvm', true)
         ];
     }

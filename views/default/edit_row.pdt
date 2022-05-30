@@ -43,6 +43,12 @@
                     </li>
                     <li>
                         <?php
+                        $this->Form->label($this->_('Proxmox.row_meta.gateway', true), 'gateway');
+                        $this->Form->fieldText('gateway', (isset($vars->gateway) ? $vars->gateway : null), ['id' => 'gateway']);
+                        ?>
+                    </li>
+                    <li>
+                        <?php
                         $this->Form->label($this->_('Proxmox.row_meta.storage', true), 'storage');
                         $this->Form->fieldText('storage', (isset($vars->storage) ? $vars->storage : $this->_('Proxmox.row_meta.default_storage', true)), ['id' => 'storage']);
                         ?>

@@ -88,6 +88,7 @@ $lang['Proxmox.row_meta.host'] = 'Hostname';
 $lang['Proxmox.row_meta.port'] = 'SSL Port Number';
 $lang['Proxmox.row_meta.vmid'] = 'Next VMID (do not change unless necessary!)';
 $lang['Proxmox.row_meta.storage'] = 'Default storage name (e.g. local)';
+$lang['Proxmox.row_meta.gateway'] = 'Default Gateway';
 $lang['Proxmox.row_meta.default_storage'] = 'local';
 $lang['Proxmox.row_meta.default_vmid'] = '200';
 $lang['Proxmox.row_meta.default_port'] = '8006';
@@ -96,7 +97,7 @@ $lang['Proxmox.row_meta.ips'] = 'IPs (one per line)';
 
 
 // Server types
-$lang['Proxmox.types.openvz'] = 'OpenVZ';
+$lang['Proxmox.types.lxc'] = 'LXC';
 $lang['Proxmox.types.kvm'] = 'KVM';
 
 
@@ -125,6 +126,7 @@ $lang['Proxmox.package_fields.available_nodes'] = 'Available Nodes';
 
 // Service fields
 $lang['Proxmox.service_field.proxmox_hostname'] = 'Hostname';
+$lang['Proxmox.service_field.proxmox_password'] = 'Password';
 $lang['Proxmox.service_field.proxmox_template'] = 'Template';
 
 
