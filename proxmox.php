@@ -256,6 +256,21 @@ class Proxmox extends Module
                 'key' => 'proxmox_netspeed',
                 'value' => $params['netspeed'],
                 'encrypted' => 0
+            ],
+            [
+                'key' => 'proxmox_cpulimit',
+                'value' => $params['cpulimit'],
+                'encrypted' => 0
+            ],
+            [
+                'key' => 'proxmox_cpuunits',
+                'value' => $params['cpuunits'],
+                'encrypted' => 0
+            ],
+            [
+                'key' => 'proxmox_swap',
+                'value' => $params['swap'],
+                'encrypted' => 0
             ]
         ];
     }
@@ -961,6 +976,43 @@ class Proxmox extends Module
             )
         );
         $fields->setField($netspeed);
+
+        // Set cpulimit
+        $cpulimit = $fields->label(Language::_('Proxmox.package_fields.cpulimit', true), 'proxmox_cpulimit');
+        $cpulimit->attach(
+            $fields->fieldText(
+                'meta[cpulimit]',
+                (isset($vars->meta['cpulimit']) ? $vars->meta['cpulimit'] : null),
+                ['id' => 'proxmox_cpulimit']
+            )
+        );
+        $fields->setField($cpulimit);
+
+        // Set cpuunits
+        $cpuunits = $fields->label(Language::_('Proxmox.package_fields.cpuunits', true), 'proxmox_cpuunits');
+        $cpuunits->attach(
+            $fields->fieldText(
+                'meta[cpuunits]',
+                (isset($vars->meta['cpuunits']) ? $vars->meta['cpuunits'] : null),
+                ['id' => 'proxmox_cpuunits']
+            )
+        );
+        $fields->setField($cpuunits);
+
+
+        if ((isset($vars->meta['type']) ? $vars->meta['type'] : null) != 'qemu') {
+
+            // Set swap
+            $swap = $fields->label(Language::_('Proxmox.package_fields.swap', true), 'proxmox_swap');
+            $swap->attach(
+                $fields->fieldText(
+                    'meta[swap]',
+                    (isset($vars->meta['swap']) ? $vars->meta['swap'] : null),
+                    ['id' => 'proxmox_swap']
+                )
+            );
+            $fields->setField($swap);
+        }
 
         return $fields;
     }
@@ -1958,8 +2010,11 @@ class Proxmox extends Module
             'userid' => isset($vars['client_id']) ? 'vmuser' . $vars['client_id'] : null,
             'password'=> $vars['password'],
             'memory' => $package->meta->memory,
+            'swap' => $package->meta->swap,
             'hdd' => $package->meta->hdd,
             'sockets' => $package->meta->cpu,
+            'cpulimit' => $package->meta->cpulimit,
+            'cpuunits' => $package->meta->cpuunits,
             'netspeed' => $package->meta->netspeed
         ];
 

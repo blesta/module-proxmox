@@ -119,6 +119,9 @@ $lang['Proxmox.package_fields.hdd'] = 'Storage (GB)';
 $lang['Proxmox.package_fields.memory'] = 'RAM (MB)';
 $lang['Proxmox.package_fields.cpu'] = 'vCPU count';
 $lang['Proxmox.package_fields.netspeed'] = 'Network speed rate (MByte/s)';
+$lang['Proxmox.package_fields.cpulimit'] = 'CPU Limit';
+$lang['Proxmox.package_fields.cpuunits'] = 'CPU Units';
+$lang['Proxmox.package_fields.swap'] = 'SWAP (MB)';
 
 $lang['Proxmox.package_fields.assigned_nodes'] = 'Assigned Nodes';
 $lang['Proxmox.package_fields.available_nodes'] = 'Available Nodes';
