@@ -350,6 +350,18 @@ class Proxmox extends Module
 
             $service_fields = $this->serviceFieldsToObject($service->fields);
 
+            $available_ips = explode("\n", $row->meta->ips);
+
+            $new_mod_row_params = [];
+            foreach ($row->meta as $key => $value) {
+                $new_mod_row_params[$key] = $value;
+            }
+
+            $available_ips[] = $service_fields->proxmox_ip;
+            $new_mod_row_params['ips'] = implode("\n", $available_ips);
+            $this->ModuleManager->editRow($row->id, $new_mod_row_params);
+
+
             // Attempt to terminate the virtual server
             try {
                 // Load up the Virtual Server API
