@@ -268,6 +268,11 @@ class Proxmox extends Module
                 'encrypted' => 0
             ],
             [
+                'key' => 'proxmox_unprivileged',
+                'value' => $params['unprivileged'],
+                'encrypted' => 0
+            ],
+            [
                 'key' => 'proxmox_swap',
                 'value' => $params['swap'],
                 'encrypted' => 0
@@ -1024,6 +1029,21 @@ class Proxmox extends Module
                 )
             );
             $fields->setField($swap);
+
+            // Set unprivileged
+
+            $unprivilegeds = ['' => Language::_('Proxmox.please_select', true)] + $this->setUnprivileged();
+            $unprivileged = $fields->label(Language::_('Proxmox.package_fields.unprivileged', true), 'proxmox_unprivileged');
+            $unprivileged->attach(
+                $fields->fieldSelect(
+                    'meta[unprivileged]',
+                    $unprivilegeds,
+                    (isset($vars->meta['unprivileged']) ? $vars->meta['unprivileged'] : null),
+                    ['id' => 'proxmox_unprivileged']
+                )
+            );
+            $fields->setField($unprivileged);
+            unset($unprivileged);
         }
 
         return $fields;
@@ -2027,6 +2047,7 @@ class Proxmox extends Module
             'sockets' => $package->meta->cpu,
             'cpulimit' => $package->meta->cpulimit,
             'cpuunits' => $package->meta->cpuunits,
+            'unprivileged' => $package->meta->unprivileged,
             'netspeed' => $package->meta->netspeed
         ];
 
@@ -2313,6 +2334,14 @@ class Proxmox extends Module
         return [
             'lxc' => Language::_('Proxmox.types.lxc', true),
             'qemu' => Language::_('Proxmox.types.kvm', true)
+        ];
+    }
+
+    private function setUnprivileged()
+    {
+        return [
+            '0' => Language::_('Proxmox.unprivileged.disabled', true),
+            '1' => Language::_('Proxmox.unprivileged.enabled', true)
         ];
     }
 

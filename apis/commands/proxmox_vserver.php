@@ -70,6 +70,7 @@ class ProxmoxVserver
                 break;
             case 'lxc':
                 $response = $this->api->submit('nodes/' . $vars['node'] . '/lxc', [
+                    'unprivileged' => $vars['unprivileged'],
                     'vmid' => $vars['vmid'],
                     'ostemplate' => $vars['storage'] . ':vztmpl/' . $vars['template'],
                     'cores' => $vars['sockets'],

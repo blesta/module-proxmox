@@ -101,6 +101,11 @@ $lang['Proxmox.types.lxc'] = 'LXC';
 $lang['Proxmox.types.kvm'] = 'KVM';
 
 
+// Set Unprivileged
+$lang['Proxmox.unprivileged.disabled'] = 'Disabled';
+$lang['Proxmox.unprivileged.enabled'] = 'Enabled';
+
+
 // Add module row
 $lang['Proxmox.add_row.box_title'] = 'Add Proxmox Server';
 $lang['Proxmox.add_row.basic_title'] = 'Basic Settings';
@@ -122,6 +127,7 @@ $lang['Proxmox.package_fields.netspeed'] = 'Network speed rate (MByte/s)';
 $lang['Proxmox.package_fields.cpulimit'] = 'CPU Limit';
 $lang['Proxmox.package_fields.cpuunits'] = 'CPU Units';
 $lang['Proxmox.package_fields.swap'] = 'SWAP (MB)';
+$lang['Proxmox.package_fields.unprivileged'] = 'Unprivileged';
 
 $lang['Proxmox.package_fields.assigned_nodes'] = 'Assigned Nodes';
 $lang['Proxmox.package_fields.available_nodes'] = 'Available Nodes';
