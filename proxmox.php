@@ -1456,6 +1456,7 @@ class Proxmox extends Module
                     );
 
                     $params = [
+                        'unprivileged' => $package->meta->unprivileged,
                         'type' => $service_fields->proxmox_type,
                         'template' => str_replace("local:vztmpl/", '', (isset($post['template']) ? $post['template'] : '')),
                         'node' => $service_fields->proxmox_node,
