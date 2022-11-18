@@ -387,6 +387,7 @@ class Proxmox extends Module
                 if($service_fields->proxmox_type != 'qemu'){
                     $this->parseResponse($vserver_api->shutdown($params), $row);
                 }
+                sleep(5);
                 $this->parseResponse($vserver_api->terminate($params), $row);
             } catch (Exception $e) {
                 // Internal Error
