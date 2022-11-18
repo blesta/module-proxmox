@@ -72,15 +72,15 @@ class ProxmoxVserver
                 $response = $this->api->submit('nodes/' . $vars['node'] . '/lxc', [
                     'unprivileged' => $vars['unprivileged'],
                     'vmid' => $vars['vmid'],
-                    'ostemplate' => $vars['storage'] . ':vztmpl/' . $vars['template'],
+                    'ostemplate' => $vars['template'],
                     'cores' => $vars['sockets'],
                     'memory' => $vars['memory'],
-                    'rootfs' => 'local:' . $vars['hdd'],
+                    'rootfs' => $vars['storage'] . ':'. $vars['hdd'],
                     'storage' => $vars['storage'],
                     'hostname' => $vars['hostname'],
                     'password' => $vars['password'],
                     'net0' => 'name=eth0,bridge=vmbr0,rate=' . $vars['netspeed'] . ',firewall=1,gw=' . $vars['gateway'] . ',ip=' . $vars['ip'] . '/32' . ',type=veth',
-                    'onboot' => '1'
+                    'onboot' => '0'
                 ], 'POST');
                 break;
         }
