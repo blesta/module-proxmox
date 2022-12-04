@@ -142,6 +142,7 @@ $lang['Proxmox.service_field.proxmox_template'] = 'Template';
 // Service Info fields
 $lang['Proxmox.service_info.proxmox_ip'] = 'Primary IP Address';
 $lang['Proxmox.service_info.proxmox_username'] = 'Username';
+$lang['Proxmox.service_info.proxmox_password'] = 'Password';
 
 
 // Tabs

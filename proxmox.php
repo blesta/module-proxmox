@@ -223,8 +223,8 @@ class Proxmox extends Module
                 'encrypted' => 0
             ],
             [
-                'key' => 'proxmox_password',
-                'value' => (isset($client['password']) ? $client['password'] : null),
+                'key' => 'password',
+                'value' => $params['password'],
                 'encrypted' => 1
             ],
             [
@@ -1127,8 +1127,8 @@ class Proxmox extends Module
         $password = $fields->label(Language::_('Proxmox.service_field.proxmox_password', true), 'password');
         $password->attach(
             $fields->fieldText(
-                'proxmox_password',
-                (isset($vars->proxmox_password) ? $vars->proxmox_password : null),
+                'password',
+                (isset($vars->password) ? $vars->password : null),
                 ['id' => 'password']
             )
         );
@@ -2041,7 +2041,7 @@ class Proxmox extends Module
             'node' => $node,
             'hostname' => isset($vars['proxmox_hostname']) ? strtolower($vars['proxmox_hostname']) : null,
             'userid' => isset($vars['client_id']) ? 'vmuser' . $vars['client_id'] : null,
-            'password'=> $vars['password'],
+            'password'=> isset($vars['password']) ? $vars['password'] : null,
             'memory' => $package->meta->memory,
             'swap' => $package->meta->swap,
             'hdd' => $package->meta->hdd,
