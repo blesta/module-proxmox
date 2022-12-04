@@ -67,6 +67,12 @@
                     </li>
                     <li>
                         <?php
+                        $this->Form->label($this->_('Proxmox.row_meta.template_storage', true), 'template_storage');
+                        $this->Form->fieldText('template_storage', (isset($vars->template_storage) ? $vars->template_storage : $this->_('Proxmox.row_meta.default_template_storage', true)), ['id' => 'template_storage']);
+                        ?>
+                    </li>
+                    <li>
+                        <?php
                         $this->Form->label($this->_('Proxmox.row_meta.ips', true), 'ips');
                         $this->Form->fieldTextarea('ips', (isset($vars->ips) ? $vars->ips : null), ['id' => 'ips']);
                         ?>

@@ -183,7 +183,7 @@ class Proxmox extends Module
             $new_mod_row_params['ips'] = implode("\n", $available_ips);
             $this->ModuleManager->editRow($row->id, $new_mod_row_params);
 
-            sleep(3);
+            sleep(5);
 
             // Attempt to start the VM
             $module_row = $this->getModuleRow($package->module_row);
@@ -245,6 +245,11 @@ class Proxmox extends Module
             [
                 'key' => 'proxmox_storage',
                 'value' => $params['storage'],
+                'encrypted' => 0
+            ],
+            [
+                'key' => 'proxmox_template_storage',
+                'value' => $params['template_storage'],
                 'encrypted' => 0
             ],
             [
@@ -382,6 +387,7 @@ class Proxmox extends Module
                 if($service_fields->proxmox_type != 'qemu'){
                     $this->parseResponse($vserver_api->shutdown($params), $row);
                 }
+                sleep(5);
                 $this->parseResponse($vserver_api->terminate($params), $row);
             } catch (Exception $e) {
                 // Internal Error
@@ -712,7 +718,7 @@ class Proxmox extends Module
     public function addModuleRow(array &$vars)
     {
         $meta_fields = ['server_name', 'user', 'password', 'host', 'port', 'gateway',
-            'vmid', 'storage', 'default_template', 'ips'
+            'vmid', 'storage','template_storage', 'default_template', 'ips'
         ];
         $encrypted_fields = ['user', 'password'];
 
@@ -1436,7 +1442,7 @@ class Proxmox extends Module
                         $module_row
                     );
 
-                    sleep(3);
+                    sleep(5);
 
                     $this->performAction(
                         'terminate',
@@ -1458,7 +1464,7 @@ class Proxmox extends Module
                     $params = [
                         'unprivileged' => $package->meta->unprivileged,
                         'type' => $service_fields->proxmox_type,
-                        'template' => str_replace("local:vztmpl/", '', (isset($post['template']) ? $post['template'] : '')),
+                        'template' => (isset($post['template']) ? $post['template'] : ''),
                         'node' => $service_fields->proxmox_node,
                         'hostname' => $service_fields->proxmox_hostname,
                         'userid' => $service_fields->proxmox_username,
@@ -1928,7 +1934,7 @@ class Proxmox extends Module
 
         try {
             $node_api = new ProxmoxNodes($api);
-            $params = ['node' => $node, 'storage' => $module_row->meta->storage];
+            $params = ['node' => $node, 'storage' => $module_row->meta->template_storage];
 
             $this->log($module_row->meta->host . '|vserver-templates', serialize($params), 'input', true);
             $response = $this->parseResponse($node_api->storageContent($params), $module_row);
@@ -2037,7 +2043,8 @@ class Proxmox extends Module
 
         $fields = [
             'type' => $package->meta->type,
-            'template' => $module_row->meta->default_template,
+            'template' => $module_row->meta->template_storage . ':vztmpl/' . $module_row->meta->default_template,
+            'template_storage' => $module_row->meta->template_storage,
             'node' => $node,
             'hostname' => isset($vars['proxmox_hostname']) ? strtolower($vars['proxmox_hostname']) : null,
             'userid' => isset($vars['client_id']) ? 'vmuser' . $vars['client_id'] : null,
@@ -2430,6 +2437,12 @@ class Proxmox extends Module
                 'format' => [
                     'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
                     'message' => Language::_('Proxmox.!error.default_template.format', true)
+                ]
+            ],
+            'template_storage' => [
+                'format' => [
+                    'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
+                    'message' => Language::_('Proxmox.!error.storage.format', true)
                 ]
             ],
         ];
