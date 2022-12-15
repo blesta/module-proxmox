@@ -68,17 +68,19 @@ class ProxmoxVserver
                 ], 'PUT');
 
                 break;
-            case 'openvz':
-                $response = $this->api->submit('nodes/' . $vars['node'] . '/openvz', [
+            case 'lxc':
+                $response = $this->api->submit('nodes/' . $vars['node'] . '/lxc', [
+                    'unprivileged' => $vars['unprivileged'],
                     'vmid' => $vars['vmid'],
                     'ostemplate' => $vars['template'],
-                    'cpus' => $vars['sockets'],
+                    'cores' => $vars['sockets'],
                     'memory' => $vars['memory'],
-                    'disk' => $vars['hdd'],
-                    'ip_address' => $vars['ip'],
+                    'rootfs' => $vars['storage'] . ':'. $vars['hdd'],
+                    'storage' => $vars['storage'],
                     'hostname' => $vars['hostname'],
                     'password' => $vars['password'],
-                    'onboot' => '1'
+                    'net0' => 'name=eth0,bridge=vmbr0,rate=' . $vars['netspeed'] . ',firewall=1,gw=' . $vars['gateway'] . ',ip=' . $vars['ip'] . '/32' . ',type=veth',
+                    'onboot' => '0'
                 ], 'POST');
                 break;
         }

@@ -132,6 +132,7 @@ class Proxmox extends Module
         $params['vmid'] = '';
         $params['storage'] = $row->meta->storage;
         $params['ip'] = '';
+        $params['gateway'] = $row->meta->gateway;
 
         // Validate the service-specific fields
         $this->validateService($package, $vars);
@@ -184,7 +185,7 @@ class Proxmox extends Module
             $new_mod_row_params['ips'] = implode("\n", $available_ips);
             $this->ModuleManager->editRow($row->id, $new_mod_row_params);
 
-            sleep(3);
+            sleep(5);
 
             // Attempt to start the VM
             $module_row = $this->getModuleRow($package->module_row);
@@ -224,8 +225,8 @@ class Proxmox extends Module
                 'encrypted' => 0
             ],
             [
-                'key' => 'proxmox_password',
-                'value' => (isset($client['password']) ? $client['password'] : null),
+                'key' => 'password',
+                'value' => $params['password'],
                 'encrypted' => 1
             ],
             [
@@ -244,8 +245,43 @@ class Proxmox extends Module
                 'encrypted' => 0
             ],
             [
+                'key' => 'proxmox_storage',
+                'value' => $params['storage'],
+                'encrypted' => 0
+            ],
+            [
+                'key' => 'proxmox_template_storage',
+                'value' => $params['template_storage'],
+                'encrypted' => 0
+            ],
+            [
+                'key' => 'proxmox_gateway',
+                'value' => $params['gateway'],
+                'encrypted' => 0
+            ],
+            [
                 'key' => 'proxmox_netspeed',
                 'value' => $params['netspeed'],
+                'encrypted' => 0
+            ],
+            [
+                'key' => 'proxmox_cpulimit',
+                'value' => $params['cpulimit'],
+                'encrypted' => 0
+            ],
+            [
+                'key' => 'proxmox_cpuunits',
+                'value' => $params['cpuunits'],
+                'encrypted' => 0
+            ],
+            [
+                'key' => 'proxmox_unprivileged',
+                'value' => $params['unprivileged'],
+                'encrypted' => 0
+            ],
+            [
+                'key' => 'proxmox_swap',
+                'value' => $params['swap'],
                 'encrypted' => 0
             ]
         ];
@@ -326,6 +362,18 @@ class Proxmox extends Module
 
             $service_fields = $this->serviceFieldsToObject($service->fields);
 
+            $available_ips = explode("\n", $row->meta->ips);
+
+            $new_mod_row_params = [];
+            foreach ($row->meta as $key => $value) {
+                $new_mod_row_params[$key] = $value;
+            }
+
+            $available_ips[] = $service_fields->proxmox_ip;
+            $new_mod_row_params['ips'] = implode("\n", $available_ips);
+            $this->ModuleManager->editRow($row->id, $new_mod_row_params);
+
+
             // Attempt to terminate the virtual server
             try {
                 // Load up the Virtual Server API
@@ -338,7 +386,11 @@ class Proxmox extends Module
 
                 // Terminate the Virtual Server
                 $this->log($row->meta->host . '|vserver-terminate', serialize($params), 'input', true);
-                $response = $this->parseResponse($vserver_api->terminate($params), $row);
+                if($service_fields->proxmox_type != 'qemu'){
+                    $this->parseResponse($vserver_api->shutdown($params), $row);
+                }
+                sleep(5);
+                $this->parseResponse($vserver_api->terminate($params), $row);
             } catch (Exception $e) {
                 // Internal Error
                 $this->Input->setErrors(['api' => ['internal' => Language::_('Proxmox.!error.api.internal', true)]]);
@@ -667,8 +719,8 @@ class Proxmox extends Module
      */
     public function addModuleRow(array &$vars)
     {
-        $meta_fields = ['server_name', 'user', 'password', 'host', 'port',
-            'vmid', 'storage', 'default_template', 'ips'
+        $meta_fields = ['server_name', 'user', 'password', 'host', 'port', 'gateway',
+            'vmid', 'storage','template_storage', 'default_template', 'ips'
         ];
         $encrypted_fields = ['user', 'password'];
 
@@ -950,6 +1002,58 @@ class Proxmox extends Module
         );
         $fields->setField($netspeed);
 
+        // Set cpulimit
+        $cpulimit = $fields->label(Language::_('Proxmox.package_fields.cpulimit', true), 'proxmox_cpulimit');
+        $cpulimit->attach(
+            $fields->fieldText(
+                'meta[cpulimit]',
+                (isset($vars->meta['cpulimit']) ? $vars->meta['cpulimit'] : null),
+                ['id' => 'proxmox_cpulimit']
+            )
+        );
+        $fields->setField($cpulimit);
+
+        // Set cpuunits
+        $cpuunits = $fields->label(Language::_('Proxmox.package_fields.cpuunits', true), 'proxmox_cpuunits');
+        $cpuunits->attach(
+            $fields->fieldText(
+                'meta[cpuunits]',
+                (isset($vars->meta['cpuunits']) ? $vars->meta['cpuunits'] : null),
+                ['id' => 'proxmox_cpuunits']
+            )
+        );
+        $fields->setField($cpuunits);
+
+
+        if ((isset($vars->meta['type']) ? $vars->meta['type'] : null) != 'qemu') {
+
+            // Set swap
+            $swap = $fields->label(Language::_('Proxmox.package_fields.swap', true), 'proxmox_swap');
+            $swap->attach(
+                $fields->fieldText(
+                    'meta[swap]',
+                    (isset($vars->meta['swap']) ? $vars->meta['swap'] : null),
+                    ['id' => 'proxmox_swap']
+                )
+            );
+            $fields->setField($swap);
+
+            // Set unprivileged
+
+            $unprivilegeds = ['' => Language::_('Proxmox.please_select', true)] + $this->setUnprivileged();
+            $unprivileged = $fields->label(Language::_('Proxmox.package_fields.unprivileged', true), 'proxmox_unprivileged');
+            $unprivileged->attach(
+                $fields->fieldSelect(
+                    'meta[unprivileged]',
+                    $unprivilegeds,
+                    (isset($vars->meta['unprivileged']) ? $vars->meta['unprivileged'] : null),
+                    ['id' => 'proxmox_unprivileged']
+                )
+            );
+            $fields->setField($unprivileged);
+            unset($unprivileged);
+        }
+
         return $fields;
     }
 
@@ -983,8 +1087,17 @@ class Proxmox extends Module
                 ['id' => 'proxmox_hostname']
             )
         );
+        $password = $fields->label(Language::_('Proxmox.service_field.proxmox_password', true), 'password');
+        $password->attach(
+            $fields->fieldText(
+                'password',
+                (isset($vars->password['password']) ? $vars->password['password'] : null),
+                ['id' => 'password']
+            )
+        );
         // Set the label as a field
         $fields->setField($host_name);
+        $fields->setField($password);
 
         return $fields;
     }
@@ -1019,8 +1132,17 @@ class Proxmox extends Module
                 ['id' => 'proxmox_hostname']
             )
         );
+        $password = $fields->label(Language::_('Proxmox.service_field.proxmox_password', true), 'password');
+        $password->attach(
+            $fields->fieldText(
+                'password',
+                (isset($vars->password) ? $vars->password : null),
+                ['id' => 'password']
+            )
+        );
         // Set the label as a field
         $fields->setField($host_name);
+        $fields->setField($password);
 
         return $fields;
     }
@@ -1310,7 +1432,7 @@ class Proxmox extends Module
                     );
                     break;
                 case 'reinstall':
-                    if ($service_fields->proxmox_type != 'openvz') {
+                    if ($service_fields->proxmox_type != 'lxc') {
                         break;
                     }
 
@@ -1322,7 +1444,7 @@ class Proxmox extends Module
                         $module_row
                     );
 
-                    sleep(3);
+                    sleep(5);
 
                     $this->performAction(
                         'terminate',
@@ -1342,16 +1464,19 @@ class Proxmox extends Module
                     );
 
                     $params = [
+                        'unprivileged' => $package->meta->unprivileged,
                         'type' => $service_fields->proxmox_type,
                         'template' => (isset($post['template']) ? $post['template'] : ''),
                         'node' => $service_fields->proxmox_node,
                         'hostname' => $service_fields->proxmox_hostname,
                         'userid' => $service_fields->proxmox_username,
-                        'password' => (isset($post['password']) ? $post['password'] : ''), // root password
+                        'password' => (isset($post['password']) ? $post['password'] : null),
                         'memory' => $service_fields->proxmox_memory,
                         'hdd' => $service_fields->proxmox_hdd,
+                        'storage' => $service_fields->proxmox_storage,
                         'sockets' => $service_fields->proxmox_cpu,
                         'netspeed' => $service_fields->proxmox_netspeed,
+                        'gateway' => $service_fields->proxmox_gateway,
                         'vmid' => $service_fields->proxmox_vserver_id,
                         'ip' => $service_fields->proxmox_ip
                     ];
@@ -1359,7 +1484,13 @@ class Proxmox extends Module
                     // Load the vserver API
                     $api->loadCommand('proxmox_vserver');
                     $server_api = new ProxmoxVserver($api);
-                    $server_api->create($params);
+                    // $server_api->create($params);
+                    if (($row = $this->getModuleRow())) {
+                        $masked_params = $params;
+                        $masked_params['password'] = '***';
+                        $this->log($row->meta->host . '|vserver-create', serialize($masked_params), 'input', true);
+                        $response = $this->parseResponse($server_api->create($params), $row);
+                    }
 
                     break;
                 default:
@@ -1806,7 +1937,7 @@ class Proxmox extends Module
 
         try {
             $node_api = new ProxmoxNodes($api);
-            $params = ['node' => $node, 'storage' => $module_row->meta->storage];
+            $params = ['node' => $node, 'storage' => $module_row->meta->template_storage];
 
             $this->log($module_row->meta->host . '|vserver-templates', serialize($params), 'input', true);
             $response = $this->parseResponse($node_api->storageContent($params), $module_row);
@@ -1864,7 +1995,7 @@ class Proxmox extends Module
     /**
      * Fetches the nodes available for the Proxmox server of the given type
      *
-     * @param string $type The type of server (i.e. openvz, qemu)
+     * @param string $type The type of server (i.e. lxc, qemu)
      * @param stdClass $module_row A stdClass object representing a single server
      * @return array A list of nodes
      */
@@ -1915,14 +2046,19 @@ class Proxmox extends Module
 
         $fields = [
             'type' => $package->meta->type,
-            'template' => $module_row->meta->default_template,
+            'template' => $module_row->meta->template_storage . ':vztmpl/' . $module_row->meta->default_template,
+            'template_storage' => $module_row->meta->template_storage,
             'node' => $node,
             'hostname' => isset($vars['proxmox_hostname']) ? strtolower($vars['proxmox_hostname']) : null,
             'userid' => isset($vars['client_id']) ? 'vmuser' . $vars['client_id'] : null,
-            'password' => $this->generatePassword(), // root password
+            'password'=> isset($vars['password']) ? $vars['password'] : null,
             'memory' => $package->meta->memory,
+            'swap' => $package->meta->swap,
             'hdd' => $package->meta->hdd,
             'sockets' => $package->meta->cpu,
+            'cpulimit' => $package->meta->cpulimit,
+            'cpuunits' => $package->meta->cpuunits,
+            'unprivileged' => $package->meta->unprivileged,
             'netspeed' => $package->meta->netspeed
         ];
 
@@ -2207,8 +2343,16 @@ class Proxmox extends Module
     private function getTypes()
     {
         return [
-            'openvz' => Language::_('Proxmox.types.openvz', true),
+            'lxc' => Language::_('Proxmox.types.lxc', true),
             'qemu' => Language::_('Proxmox.types.kvm', true)
+        ];
+    }
+
+    private function setUnprivileged()
+    {
+        return [
+            '0' => Language::_('Proxmox.unprivileged.disabled', true),
+            '1' => Language::_('Proxmox.unprivileged.enabled', true)
         ];
     }
 
@@ -2296,6 +2440,12 @@ class Proxmox extends Module
                 'format' => [
                     'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
                     'message' => Language::_('Proxmox.!error.default_template.format', true)
+                ]
+            ],
+            'template_storage' => [
+                'format' => [
+                    'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
+                    'message' => Language::_('Proxmox.!error.storage.format', true)
                 ]
             ],
         ];

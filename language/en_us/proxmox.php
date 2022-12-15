@@ -89,7 +89,10 @@ $lang['Proxmox.row_meta.host'] = 'Hostname';
 $lang['Proxmox.row_meta.port'] = 'SSL Port Number';
 $lang['Proxmox.row_meta.vmid'] = 'Next VMID (do not change unless necessary!)';
 $lang['Proxmox.row_meta.storage'] = 'Default storage name (e.g. local)';
+$lang['Proxmox.row_meta.gateway'] = 'Default Gateway';
 $lang['Proxmox.row_meta.default_storage'] = 'local';
+$lang['Proxmox.row_meta.template_storage'] = 'Default template (LXC) storage name (e.g. local/local-lvm)';
+$lang['Proxmox.row_meta.default_template_storage'] = 'local';
 $lang['Proxmox.row_meta.default_vmid'] = '200';
 $lang['Proxmox.row_meta.default_port'] = '8006';
 $lang['Proxmox.row_meta.default_template'] = 'Default template';
@@ -97,8 +100,13 @@ $lang['Proxmox.row_meta.ips'] = 'IPs (one per line)';
 
 
 // Server types
-$lang['Proxmox.types.openvz'] = 'OpenVZ';
+$lang['Proxmox.types.lxc'] = 'LXC';
 $lang['Proxmox.types.kvm'] = 'KVM';
+
+
+// Set Unprivileged
+$lang['Proxmox.unprivileged.disabled'] = 'Disabled';
+$lang['Proxmox.unprivileged.enabled'] = 'Enabled';
 
 
 // Add module row
@@ -119,6 +127,10 @@ $lang['Proxmox.package_fields.hdd'] = 'Storage (GB)';
 $lang['Proxmox.package_fields.memory'] = 'RAM (MB)';
 $lang['Proxmox.package_fields.cpu'] = 'vCPU count';
 $lang['Proxmox.package_fields.netspeed'] = 'Network speed rate (MByte/s)';
+$lang['Proxmox.package_fields.cpulimit'] = 'CPU Limit';
+$lang['Proxmox.package_fields.cpuunits'] = 'CPU Units';
+$lang['Proxmox.package_fields.swap'] = 'SWAP (MB)';
+$lang['Proxmox.package_fields.unprivileged'] = 'Unprivileged';
 
 $lang['Proxmox.package_fields.assigned_nodes'] = 'Assigned Nodes';
 $lang['Proxmox.package_fields.available_nodes'] = 'Available Nodes';
@@ -126,12 +138,14 @@ $lang['Proxmox.package_fields.available_nodes'] = 'Available Nodes';
 
 // Service fields
 $lang['Proxmox.service_field.proxmox_hostname'] = 'Hostname';
+$lang['Proxmox.service_field.proxmox_password'] = 'Password';
 $lang['Proxmox.service_field.proxmox_template'] = 'Template';
 
 
 // Service Info fields
 $lang['Proxmox.service_info.proxmox_ip'] = 'Primary IP Address';
 $lang['Proxmox.service_info.proxmox_username'] = 'Username';
+$lang['Proxmox.service_info.proxmox_password'] = 'Password';
 
 
 // Tabs
