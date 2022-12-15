@@ -1,5 +1,7 @@
 <?php
+
 use Blesta\Core\Util\Validate\Server;
+
 /**
  * Proxmox Module
  *
@@ -1540,9 +1542,10 @@ class Proxmox extends Module
         );
         $this->view->set(
             'module_hostname',
-            (isset($module_row->meta->host) && isset($module_row->meta->port)
-                ? 'https://' . $module_row->meta->host . ':' . $module_row->meta->port
-                : ''
+            (
+                isset($module_row->meta->host) && isset($module_row->meta->port)
+                    ? 'https://' . $module_row->meta->host . ':' . $module_row->meta->port
+                    : ''
             )
         );
 

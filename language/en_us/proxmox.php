@@ -1,4 +1,5 @@
 <?php
+
 // Actions
 $lang['Proxmox.!actions.boot'] = 'Boot';
 $lang['Proxmox.!actions.shutdown'] = 'Shutdown';
