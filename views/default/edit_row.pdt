@@ -43,32 +43,8 @@
                     </li>
                     <li>
                         <?php
-                        $this->Form->label($this->_('Proxmox.row_meta.gateway', true), 'gateway');
-                        $this->Form->fieldText('gateway', (isset($vars->gateway) ? $vars->gateway : null), ['id' => 'gateway']);
-                        ?>
-                    </li>
-                    <li>
-                        <?php
-                        $this->Form->label($this->_('Proxmox.row_meta.storage', true), 'storage');
-                        $this->Form->fieldText('storage', (isset($vars->storage) ? $vars->storage : $this->_('Proxmox.row_meta.default_storage', true)), ['id' => 'storage']);
-                        ?>
-                    </li>
-                    <li>
-                        <?php
                         $this->Form->label($this->_('Proxmox.row_meta.vmid', true), 'vmid');
                         $this->Form->fieldText('vmid', (isset($vars->vmid) ? $vars->vmid : $this->_('Proxmox.row_meta.default_vmid', true)), ['id' => 'vmid']);
-                        ?>
-                    </li>
-                    <li>
-                        <?php
-                        $this->Form->label($this->_('Proxmox.row_meta.default_template', true), 'default_template');
-                        $this->Form->fieldText('default_template', (isset($vars->default_template) ? $vars->default_template : null), ['id' => 'default_template']);
-                        ?>
-                    </li>
-                    <li>
-                        <?php
-                        $this->Form->label($this->_('Proxmox.row_meta.template_storage', true), 'template_storage');
-                        $this->Form->fieldText('template_storage', (isset($vars->template_storage) ? $vars->template_storage : $this->_('Proxmox.row_meta.default_template_storage', true)), ['id' => 'template_storage']);
                         ?>
                     </li>
                     <li>

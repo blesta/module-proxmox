@@ -69,6 +69,17 @@ class ProxmoxVserver
 
                 break;
             case 'lxc':
+                // Format net field
+                $net_fields = ['netspeed' => 'rate', 'gateway' => 'gw', 'ip' => 'ip'];
+                $net_fields_string = '';
+                foreach ($net_fields as $net_field => $api_field) {
+                    if (isset($vars[$net_field]) && $vars[$net_field] !== '') {
+                        $net_fields_string .= ',' . $api_field . '='
+                            . $vars[$net_field] . ($net_field == 'ip' ? '/32' : '');
+                    }
+                }
+
+                // https://pve.proxmox.com/pve-docs/api-viewer/#/nodes/{node}/lxc
                 $response = $this->api->submit('nodes/' . $vars['node'] . '/lxc', [
                     'unprivileged' => $vars['unprivileged'],
                     'vmid' => $vars['vmid'],
@@ -79,7 +90,7 @@ class ProxmoxVserver
                     'storage' => $vars['storage'],
                     'hostname' => $vars['hostname'],
                     'password' => $vars['password'],
-                    'net0' => 'name=eth0,bridge=vmbr0,rate=' . $vars['netspeed'] . ',firewall=1,gw=' . $vars['gateway'] . ',ip=' . $vars['ip'] . '/32' . ',type=veth',
+                    'net0' => 'name=eth0,bridge=vmbr0,type=veth,firewall=1' . $net_fields_string,
                     'onboot' => '0'
                 ], 'POST');
                 break;

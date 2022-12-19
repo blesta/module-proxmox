@@ -20,14 +20,16 @@ class ProxmoxResponse
     /**
      * Initializes the Proxmox Response
      *
-     * @param string $response The raw XML response data from an API request
+     * @param array $api_response The API response
      */
-    public function __construct($response)
+    public function __construct($api_response)
     {
-        $this->raw = $response;
+        $this->raw = $api_response['content'];
+        $this->response = json_decode($api_response['content']);
+        $this->headers = $api_response['headers'];
 
         try {
-            $this->json = json_decode($response);
+            $this->json = $this->response;
             $this->json->status = empty($this->json->data) ? 'error' : 'success';
         } catch (Exception $e) {
             // Invalid response

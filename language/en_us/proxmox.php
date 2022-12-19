@@ -44,6 +44,8 @@ $lang['Proxmox.!error.api.confirm.valid'] = 'You must acknowledge that you under
 $lang['Proxmox.!error.proxmox_root_password.length'] = 'The root password must be at least 6 characters in length.';
 $lang['Proxmox.!error.proxmox_root_password.matches'] = 'The root passwords do not match.';
 
+$lang['Proxmox.!error.module_row.missing'] = 'An internal error occurred. The module row is unavailable.';
+
 
 // Common
 $lang['Proxmox.please_select'] = '-- Please Select --';
@@ -88,14 +90,8 @@ $lang['Proxmox.row_meta.password'] = 'Password';
 $lang['Proxmox.row_meta.host'] = 'Hostname';
 $lang['Proxmox.row_meta.port'] = 'SSL Port Number';
 $lang['Proxmox.row_meta.vmid'] = 'Next VMID (do not change unless necessary!)';
-$lang['Proxmox.row_meta.storage'] = 'Default storage name (e.g. local)';
-$lang['Proxmox.row_meta.gateway'] = 'Default Gateway';
-$lang['Proxmox.row_meta.default_storage'] = 'local';
-$lang['Proxmox.row_meta.template_storage'] = 'Default template (LXC) storage name (e.g. local/local-lvm)';
-$lang['Proxmox.row_meta.default_template_storage'] = 'local';
 $lang['Proxmox.row_meta.default_vmid'] = '200';
 $lang['Proxmox.row_meta.default_port'] = '8006';
-$lang['Proxmox.row_meta.default_template'] = 'Default template';
 $lang['Proxmox.row_meta.ips'] = 'IPs (one per line)';
 
 
@@ -123,10 +119,14 @@ $lang['Proxmox.edit_row.add_btn'] = 'Update Server';
 
 // Package fields
 $lang['Proxmox.package_fields.type'] = 'Type';
+$lang['Proxmox.package_fields.storage'] = 'VS Storage Name (e.g. local)';
+$lang['Proxmox.package_fields.gateway'] = 'Gateway';
+$lang['Proxmox.package_fields.template_storage'] = 'Template (LXC) Storage Name (e.g. local/local-lvm)';
+$lang['Proxmox.package_fields.default_template'] = 'CT Template';
 $lang['Proxmox.package_fields.hdd'] = 'Storage (GB)';
 $lang['Proxmox.package_fields.memory'] = 'RAM (MB)';
-$lang['Proxmox.package_fields.cpu'] = 'vCPU count';
-$lang['Proxmox.package_fields.netspeed'] = 'Network speed rate (MByte/s)';
+$lang['Proxmox.package_fields.cpu'] = 'vCPU Count';
+$lang['Proxmox.package_fields.netspeed'] = 'Network Speed Rate (MByte/s)';
 $lang['Proxmox.package_fields.cpulimit'] = 'CPU Limit';
 $lang['Proxmox.package_fields.cpuunits'] = 'CPU Units';
 $lang['Proxmox.package_fields.swap'] = 'SWAP (MB)';
@@ -140,6 +140,8 @@ $lang['Proxmox.package_fields.available_nodes'] = 'Available Nodes';
 $lang['Proxmox.service_field.proxmox_hostname'] = 'Hostname';
 $lang['Proxmox.service_field.proxmox_password'] = 'Password';
 $lang['Proxmox.service_field.proxmox_template'] = 'Template';
+
+$lang['Proxmox.service_field.tooltip.password'] = 'You may leave the password blank to automatically generate one.';
 
 
 // Service Info fields
