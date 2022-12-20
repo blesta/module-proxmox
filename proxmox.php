@@ -189,9 +189,9 @@ class Proxmox extends Module
         }
 
         $params['vmid'] = '';
-        $params['storage'] = $row->meta->storage;
+        $params['storage'] = $package->meta->storage;
         $params['ip'] = '';
-        $params['gateway'] = $row->meta->gateway;
+        $params['gateway'] = $package->meta->gateway;
 
         // Validate the service-specific fields
         $this->validateService($package, $vars);
@@ -248,7 +248,7 @@ class Proxmox extends Module
 
             // Attempt to start the VM
             $module_row = $this->getModuleRow($package->module_row);
-            $this->performAction('boot', $params['vmid'], $params['type'], $params['node'], $module_row);
+            $this->performAction('boot', $params['vmid'], $params['type'], $params['node'], $module_row, [], true);
         }
 
         // Return service fields
@@ -917,9 +917,10 @@ class Proxmox extends Module
         $fields = new ModuleFields();
 
         // Show nodes, and set javascript field toggles
+        $assigned_nodes = $vars->meta['nodes'] ?? [];
         $this->Form->setOutput(true);
         $fields->setHtml('
-			<table>
+			<table id="proxmox_node_selector" style="display: none;">
 				<tr>
 					<td>' . Language::_('Proxmox.package_fields.assigned_nodes', true) . '</td>
 					<td></td>
@@ -930,7 +931,7 @@ class Proxmox extends Module
 						'
                         . $this->Form->fieldMultiSelect(
                             'meta[nodes][]',
-                            $vars->meta['nodes'] ?? [],
+                            $assigned_nodes,
                             [],
                             ['id' => 'assigned_nodes']
                         )
@@ -959,6 +960,12 @@ class Proxmox extends Module
 					});
 
 					$('#proxmox_type').change(function() {
+						selectAssignedNodes();
+						fetchModuleOptions();
+					});
+
+					$('#proxmox_template_storage').change(function() {
+						selectAssignedNodes();
 						fetchModuleOptions();
 					});
 
@@ -970,11 +977,15 @@ class Proxmox extends Module
 					// Move nodes from right to left
 					$('.move_left').click(function() {
 						$('#available_nodes option:selected').appendTo($('#assigned_nodes'));
+						selectAssignedNodes();
+						fetchModuleOptions();
 						return false;
 					});
 					// Move nodes from left to right
 					$('.move_right').click(function() {
 						$('#assigned_nodes option:selected').appendTo($('#available_nodes'));
+						selectAssignedNodes();
+						fetchModuleOptions();
 						return false;
 					});
 				});
@@ -993,6 +1004,9 @@ class Proxmox extends Module
 						$('#assigned_nodes').closest('table').show();
 					}
 				}
+
+                $('#proxmox_type').parent().after($('#proxmox_node_selector'));
+                $('#proxmox_node_selector').show().wrap('<li></li>');
 			</script>
 		");
 
@@ -1010,14 +1024,57 @@ class Proxmox extends Module
         $fields->setField($type);
         unset($type);
 
-        $storage_results = $this->getStorage($module_row);
-        $template_storage_options = [];
-        foreach ($storage_results as $storage_result) {
-            $template_storage_options[$storage_result->storage] = $storage_result->storage;
-        }
+
+        // Set Storage field
+        $storage_options = $this->getNodeStorage(reset($assigned_nodes), $module_row);
+        $storage = $fields->label(Language::_('Proxmox.package_fields.storage', true), 'proxmox_storage');
+        $storage->attach(
+            $fields->fieldSelect(
+                'meta[storage]',
+                $storage_options,
+                $vars->meta['storage'] ?? 'local',
+                ['id' => 'proxmox_storage']
+            )
+        );
+        $fields->setField($storage);
         if (($vars->meta['type'] ?? null) === 'lxc') {
+            // Set template storage field
+            $template_storage = $fields->label(
+                Language::_('Proxmox.package_fields.template_storage', true),
+                'proxmox_template_storage'
+            );
+            $template_storage->attach(
+                $fields->fieldSelect(
+                    'meta[template_storage]',
+                    $storage_options,
+                    $vars->meta['template_storage'] ?? 'local',
+                    ['id' => 'proxmox_template_storage']
+                )
+            );
+            $fields->setField($template_storage);
+
+            // Set default template field
+            $templates = $this->getServerTemplates(
+                reset($assigned_nodes),
+                $vars->meta['template_storage'] ?? 'local',
+                $module_row
+            );
+            $default_template = $fields->label(
+                Language::_('Proxmox.package_fields.default_template', true),
+                'proxmox_default_template'
+            );
+            $default_template->attach(
+                $fields->fieldSelect(
+                    'meta[default_template]',
+                    $templates,
+                    $vars->meta['default_template'] ?? 'default',
+                    ['id' => 'proxmox_default_template', 'class' => 'lxc_field']
+                )
+            );
+            $fields->setField($default_template);
+
             // Set unprivileged field
-            $unprivilegeds = ['' => Language::_('Proxmox.please_select', true)] + $this->setUnprivileged();
+            $unprivilegeds = $this->setUnprivileged();
             $unprivileged = $fields->label(
                 Language::_('Proxmox.package_fields.unprivileged', true),
                 'proxmox_unprivileged'
@@ -1032,49 +1089,7 @@ class Proxmox extends Module
             );
             $fields->setField($unprivileged);
             unset($unprivileged);
-
-            // Set template storage field
-            $template_storage = $fields->label(
-                Language::_('Proxmox.package_fields.template_storage', true),
-                'proxmox_template_storage'
-            );
-            $template_storage->attach(
-                $fields->fieldSelect(
-                    'meta[template_storage]',
-                    ['' => Language::_('Proxmox.please_select', true)] + $template_storage_options,
-                    $vars->meta['template_storage'] ?? 'local',
-                    ['id' => 'proxmox_template_storage']
-                )
-            );
-            $fields->setField($template_storage);
-
-            // Set default template field
-            $default_template = $fields->label(
-                Language::_('Proxmox.package_fields.default_template', true),
-                'proxmox_default_template'
-            );
-            $default_template->attach(
-                $fields->fieldText(
-                    'meta[default_template]',
-                    $vars->meta['default_template'] ?? 'default',
-                    ['id' => 'proxmox_default_template', 'class' => 'lxc_field']
-                )
-            );
-            $fields->setField($default_template);
         }
-        var_dump($this->getServerTemplates(reset($vars->meta['nodes']), $module_row));
-        var_dump($this->getNodeStorage(reset($vars->meta['nodes']), $module_row));
-        // Set Storage field
-        $storage = $fields->label(Language::_('Proxmox.package_fields.storage', true), 'proxmox_storage');
-        $storage->attach(
-            $fields->fieldSelect(
-                'meta[storage]',
-                ['' => Language::_('Proxmox.please_select', true)] + $template_storage_options,
-                $vars->meta['storage'] ?? 'local',
-                ['id' => 'proxmox_storage']
-            )
-        );
-        $fields->setField($storage);
 
         // Set HDD field
         $hdd = $fields->label(Language::_('Proxmox.package_fields.hdd', true), 'proxmox_hdd');
@@ -1128,7 +1143,11 @@ class Proxmox extends Module
         // Set Gateway field
         $gateway = $fields->label(Language::_('Proxmox.package_fields.gateway', true), 'proxmox_gateway');
         $gateway->attach(
-            $fields->fieldText('meta[gateway]', $vars->meta['gateway'] ?? null, ['id' => 'proxmox_gateway'])
+            $fields->fieldText(
+                'meta[gateway]',
+                $vars->meta['gateway'] ?? null,
+                ['id' => 'proxmox_gateway', 'placeholder' => 'e.g. 127.0.0.1']
+            )
         );
         $fields->setField($gateway);
 
@@ -1363,8 +1382,14 @@ class Proxmox extends Module
         // Set default vars
         $vars = ['hostname' => $service_fields->proxmox_hostname];
 
-        $this->view->set('isos', $this->getServerISOs($service_fields->proxmox_node, $module_row));
-        $this->view->set('templates', $this->getServerTemplates($service_fields->proxmox_node, $module_row));
+        $this->view->set(
+            'isos',
+            $this->getServerISOs($service_fields->proxmox_node, $package->meta->storage, $module_row)
+        );
+        $this->view->set(
+            'templates',
+            $this->getServerTemplates($service_fields->proxmox_node, $package->meta->template_storage, $module_row)
+        );
 
         $this->view->set('type', $service_fields->proxmox_type);
 
@@ -1415,8 +1440,14 @@ class Proxmox extends Module
         // Set default vars
         $vars = ['hostname' => $service_fields->proxmox_hostname];
 
-        $this->view->set('isos', $this->getServerISOs($service_fields->proxmox_node, $module_row));
-        $this->view->set('templates', $this->getServerTemplates($service_fields->proxmox_node, $module_row));
+        $this->view->set(
+            'isos',
+            $this->getServerISOs($service_fields->proxmox_node, $package->meta->template_storage, $module_row)
+        );
+        $this->view->set(
+            'templates',
+            $this->getServerTemplates($service_fields->proxmox_node, $package->meta->template_storage, $module_row)
+        );
         $this->view->set('type', $service_fields->proxmox_type);
 
         // Fetch the server status
@@ -1548,19 +1579,19 @@ class Proxmox extends Module
                     );
 
                     $params = [
-                        'unprivileged' => $package->meta->unprivileged,
-                        'type' => $service_fields->proxmox_type,
-                        'template' => (isset($post['template']) ? $post['template'] : ''),
+                        'unprivileged' => $package->meta->unprivileged ?? 'disabled',
+                        'type' => $service_fields->proxmox_type ?? 'lxc',
+                        'template' => $package->meta->template_storage . ':vztmpl/' . ($post['template'] ?? ''),
                         'node' => $service_fields->proxmox_node,
                         'hostname' => $service_fields->proxmox_hostname,
                         'userid' => $service_fields->proxmox_username,
                         'password' => (!empty($post['password']) ? $post['password'] : $this->generatePassword()),
-                        'memory' => $service_fields->proxmox_memory,
-                        'hdd' => $service_fields->proxmox_hdd,
-                        'storage' => $service_fields->proxmox_storage,
-                        'sockets' => $service_fields->proxmox_cpu,
-                        'netspeed' => $service_fields->proxmox_netspeed,
-                        'gateway' => $service_fields->proxmox_gateway,
+                        'memory' => $service_fields->proxmox_memory ?? 0,
+                        'hdd' => $service_fields->proxmox_hdd ?? 0,
+                        'storage' => $service_fields->proxmox_storage ?? 0,
+                        'sockets' => $service_fields->proxmox_cpu ?? 0,
+                        'netspeed' => $service_fields->proxmox_netspeed ?? 0,
+                        'gateway' => $service_fields->proxmox_gateway ?? '',
                         'vmid' => $service_fields->proxmox_vserver_id,
                         'ip' => $service_fields->proxmox_ip
                     ];
@@ -1646,10 +1677,19 @@ class Proxmox extends Module
      * @param int $server_id The virtual server ID
      * @param stdClass $module_row An stdClass object representing a single server
      * @param array $data A key=>value list of data parameters to include with the action
+     * @param bool $ignore_error Ignores any response error and returns the response anyway;
+     *  useful when a response is expected to fail (e.g. check client exists) (optional, default false)
      * @return bool True if the action was performed successfully, false otherwise
      */
-    private function performAction($action, $server_id, $type, $node, $module_row, array $data = [])
-    {
+    private function performAction(
+        $action,
+        $server_id,
+        $type,
+        $node,
+        $module_row,
+        array $data = [],
+        $ignore_error = false
+    ) {
         $api = $this->getApi(
             $module_row->meta->user,
             $module_row->meta->password,
@@ -1672,7 +1712,7 @@ class Proxmox extends Module
             $response = $this->parseResponse(
                 $server_api->{$action}($params),
                 $module_row,
-                in_array($action, $null_actions)
+                in_array($action, $null_actions) || $ignore_error
             );
 
             // Accept successful responses, or responses that are null for specific actions
@@ -1960,10 +2000,11 @@ class Proxmox extends Module
      * Retrieves a list of the virtual server ISOs
      *
      * @param string $node The node of the server
+     * @param string $storage The storage location to search
      * @param stdClass $module_row A stdClass object representing a single server
      * @return stdClass An stdClass object representing the server ISOs
      */
-    private function getServerISOs($node, $module_row)
+    private function getServerISOs($node, $storage, $module_row)
     {
         $api = $this->getApi(
             $module_row->meta->user,
@@ -1978,7 +2019,7 @@ class Proxmox extends Module
 
         try {
             $node_api = new ProxmoxNodes($api);
-            $params = ['node' => $node, 'storage' => $module_row->meta->storage];
+            $params = ['node' => $node, 'storage' => $storage];
 
             $this->log($module_row->meta->host . '|vserver-isos', serialize($params), 'input', true);
             $response = $this->parseResponse($node_api->storageContent($params), $module_row);
@@ -1999,10 +2040,11 @@ class Proxmox extends Module
      * Retrieves a list of the virtual server templates
      *
      * @param string $node The node of the server
+     * @param string $storage The storage location to search
      * @param stdClass $module_row A stdClass object representing a single server
      * @return stdClass An stdClass object representing the server templates
      */
-    private function getServerTemplates($node, $module_row)
+    private function getServerTemplates($node, $storage, $module_row)
     {
         $api = $this->getApi(
             $module_row->meta->user,
@@ -2017,7 +2059,7 @@ class Proxmox extends Module
 
         try {
             $node_api = new ProxmoxNodes($api);
-            $params = ['node' => $node, 'storage' => $module_row->meta->template_storage];
+            $params = ['node' => $node, 'storage' => $storage];
 
             $this->log($module_row->meta->host . '|vserver-templates', serialize($params), 'input', true);
             $response = $this->parseResponse($node_api->storageContent($params), $module_row);
@@ -2026,9 +2068,11 @@ class Proxmox extends Module
         }
 
         $result = [];
-        foreach ($response->data as $file) {
-            if ($file->content == 'vztmpl') {
-                $result[$file->volid] = $file->volid;
+        foreach ($response->data ?? [] as $file) {
+            if (($file->content ?? '') == 'vztmpl') {
+                $template_parts = explode('/', $file->volid);
+                $template = $template_parts[count($template_parts) - 1];
+                $result[$template] = $template;
             }
         }
         return $result;
@@ -2104,7 +2148,7 @@ class Proxmox extends Module
 
         $result = [];
         foreach ($response->data as $storage) {
-            if (strpos($storage->content, 'vztmpl') !== false) {
+            if (strpos($storage->content ?? '', 'vztmpl') !== false) {
                 $result[$storage->storage] = $storage->storage;
             }
         }
@@ -2202,19 +2246,19 @@ class Proxmox extends Module
 
         $fields = [
             'type' => $package->meta->type,
-            'template' => $module_row->meta->template_storage . ':vztmpl/' . $module_row->meta->default_template,
-            'template_storage' => $module_row->meta->template_storage,
+            'template' => $package->meta->template_storage . ':vztmpl/' . $package->meta->default_template ?? null,
+            'template_storage' => $package->meta->template_storage ?? null,
             'node' => $node,
             'hostname' => isset($vars['proxmox_hostname']) ? strtolower($vars['proxmox_hostname']) : null,
             'userid' => isset($vars['client_id']) ? 'vmuser' . $vars['client_id'] : null,
             'password'=> !empty($vars['password']) ? $vars['password'] : $this->generatePassword(),
-            'memory' => $package->meta->memory,
-            'swap' => $package->meta->swap,
-            'hdd' => $package->meta->hdd,
-            'sockets' => $package->meta->cpu,
-            'cpulimit' => $package->meta->cpulimit,
-            'cpuunits' => $package->meta->cpuunits,
-            'unprivileged' => $package->meta->unprivileged,
+            'memory' => $package->meta->memory ?? 0,
+            'swap' => $package->meta->swap ?? 0,
+            'hdd' => $package->meta->hdd ?? 0,
+            'sockets' => $package->meta->cpu ?? 0,
+            'cpulimit' => $package->meta->cpulimit ?? 0,
+            'cpuunits' => $package->meta->cpuunits ?? 0,
+            'unprivileged' => $package->meta->unprivileged ?? null,
             'netspeed' => $package->meta->netspeed
         ];
 
@@ -2398,10 +2442,15 @@ class Proxmox extends Module
                 }
 
                 $errors = $response->errors();
-                $error = isset($errors->statusmsg)
-                    ? $errors->statusmsg
-                    : Language::_('Proxmox.!error.api.unknown', true);
-                $this->Input->setErrors(['api' => ['response' => $this->Html->safe($error)]]);
+                if (!empty($errors)) {
+                    $raw_output = $errors['server'];
+                    $this->Input->setErrors(['api' => ['internal' => Language::_('Proxmox.!error.api.internal', true)]]);
+                } else {
+                    $this->Input->setErrors(
+                        ['api' => ['response' => $this->Html->safe(Language::_('Proxmox.!error.api.unknown', true))]]
+                    );
+                }
+
                 break;
             default:
                 // Invalid response
@@ -2586,24 +2635,6 @@ class Proxmox extends Module
                     'message' => Language::_('Proxmox.!error.vmid.format', true)
                 ]
             ],
-            'storage' => [
-                'format' => [
-                    'rule' => ['matches', '/^[0-9a-zA-Z\-]+$/'],
-                    'message' => Language::_('Proxmox.!error.storage.format', true)
-                ]
-            ],
-            'default_template' => [
-                'format' => [
-                    'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
-                    'message' => Language::_('Proxmox.!error.default_template.format', true)
-                ]
-            ],
-            'template_storage' => [
-                'format' => [
-                    'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
-                    'message' => Language::_('Proxmox.!error.storage.format', true)
-                ]
-            ],
         ];
     }
 
@@ -2651,7 +2682,25 @@ class Proxmox extends Module
                     'rule' => ['matches', '/^[0-9]+$/'],
                     'message' => Language::_('Proxmox.!error.meta[netspeed].format', true)
                 ]
-            ]
+            ],
+            'meta[storage]' => [
+                'format' => [
+                    'rule' => ['matches', '/^[0-9a-zA-Z\-]+$/'],
+                    'message' => Language::_('Proxmox.!error.meta[storage].format', true)
+                ]
+            ],
+            'meta[default_template]' => [
+                'format' => [
+                    'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
+                    'message' => Language::_('Proxmox.!error.meta[default_template].format', true)
+                ]
+            ],
+            'meta[template_storage]' => [
+                'format' => [
+                    'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
+                    'message' => Language::_('Proxmox.!error.meta[storage].format', true)
+                ]
+            ],
         ];
 
         return $rules;

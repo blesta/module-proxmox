@@ -16,6 +16,7 @@ class ProxmoxResponse
      * @var string The raw response from the API (JSON)
      */
     private $raw;
+    private $errors = [];
 
     /**
      * Initializes the Proxmox Response
@@ -27,6 +28,15 @@ class ProxmoxResponse
         $this->raw = $api_response['content'];
         $this->response = json_decode($api_response['content']);
         $this->headers = $api_response['headers'];
+
+        // Set status
+        if (isset($this->headers[0])) {
+            $status_parts = explode(' ', $this->headers[0]);
+            if (isset($status_parts[1]) && $status_parts[1] == '500') {
+                array_shift($status_parts);
+                $this->errors = ['server' => implode(' ', $status_parts)];
+            }
+        }
 
         try {
             $this->json = $this->response;
@@ -70,12 +80,7 @@ class ProxmoxResponse
      */
     public function errors()
     {
-        if ($this->json) {
-            if ($this->json->status == 'error') {
-                return $this->json;
-            }
-        }
-        return false;
+        return $this->errors;
     }
 
     /**
