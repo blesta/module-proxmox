@@ -1036,6 +1036,9 @@ class Proxmox extends Module
                 ['id' => 'proxmox_storage']
             )
         );
+        // Add tooltip
+        $tooltip = $fields->tooltip(Language::_('Proxmox.package_fields.tooltip.storage', true));
+        $storage->attach($tooltip);
         $fields->setField($storage);
         if (($vars->meta['type'] ?? null) === 'lxc') {
             // Set template storage field
@@ -1051,6 +1054,9 @@ class Proxmox extends Module
                     ['id' => 'proxmox_template_storage']
                 )
             );
+            // Add tooltip
+            $tooltip = $fields->tooltip(Language::_('Proxmox.package_fields.tooltip.template_storage', true));
+            $template_storage->attach($tooltip);
             $fields->setField($template_storage);
 
             // Set default template field
