@@ -1347,6 +1347,7 @@ class Proxmox extends Module
         $this->view->set('vars', (object)$vars);
         $this->view->set('client_id', $service->client_id);
         $this->view->set('service_id', $service->id);
+        $this->view->set('service_fields', $this->serviceFieldsToObject($service->fields));
 
         $this->view->set('view', $this->view->view);
         $this->view->setDefaultView('components' . DS . 'modules' . DS . 'proxmox' . DS);

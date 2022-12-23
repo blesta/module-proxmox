@@ -145,6 +145,7 @@ $lang['Proxmox.service_field.proxmox_template'] = 'Template';
 $lang['Proxmox.service_info.proxmox_ip'] = 'Primary IP Address';
 $lang['Proxmox.service_info.proxmox_username'] = 'Username';
 $lang['Proxmox.service_info.proxmox_password'] = 'Password';
+$lang['Proxmox.service_info.vm_username'] = 'root / Administrator';
 
 
 // Tabs
@@ -160,6 +161,9 @@ $lang['Proxmox.tab_actions.status_running'] = 'Online';
 $lang['Proxmox.tab_actions.status_stopped'] = 'Offline';
 $lang['Proxmox.tab_actions.status_disabled'] = 'Disabled';
 $lang['Proxmox.tab_actions.server_status'] = 'Server Status';
+
+$lang['Proxmox.service_info.vcpu'] = 'vCPU';
+$lang['Proxmox.service_info.memory'] = 'RAM';
 
 $lang['Proxmox.tab_actions.heading_mount_iso'] = 'Mount ISO';
 $lang['Proxmox.tab_actions.heading_reinstall'] = 'Reinstall';
