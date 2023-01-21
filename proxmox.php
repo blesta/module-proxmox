@@ -1794,6 +1794,16 @@ class Proxmox extends Module
         return Language::_('Proxmox.!bytes.value', true, $value, $unit);
     }
 
+    private function convertSecondsToDays($seconds)
+    {
+
+        $days = floor($seconds / 86400);
+        $hours= floor(($seconds % 86400) / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+
+        return "$days days, $hours hours, $minutes minutes";
+    }
+
     /**
      * Initializes the API and returns an instance of that object with the given $host, $user, and $pass set
      *
@@ -1853,7 +1863,11 @@ class Proxmox extends Module
                 // Set CPU to percent usage
                 if ($key == 'cpu') {
                     $data['cpu_formatted'] = round(($value*100), 2);
-                } elseif (array_key_exists($key, $percent_values)) {
+                }
+                if ($key == 'uptime'){
+                    $data['uptime_formatted'] = $this->convertSecondsToDays($value);
+                }
+                elseif (array_key_exists($key, $percent_values)) {
                     // Set mem and disk stats
                     if (isset($temp_data['max' . $key])) {
                         $data[$key . '_formatted']['used_' . $percent_values[$key] . '_formatted']

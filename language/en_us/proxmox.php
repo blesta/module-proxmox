@@ -47,6 +47,7 @@ $lang['Proxmox.!error.proxmox_root_password.matches'] = 'The root passwords do n
 // Common
 $lang['Proxmox.please_select'] = '-- Please Select --';
 $lang['Proxmox.!bytes.value'] = '%1$s%2$s'; // %1$s is a number value, %2$s is the unit of that value (i.e., one of B, KB, MB, GB)
+$lang['Proxmox.!seconds.value'] = '%1$s%2$s'; // %1$s is a time value, %2$s is the unit of that value (i.e., one of seconds, hours, days)
 $lang['Proxmox.!percent.used'] = '%1$s%'; // %1$s is a percentage value
 
 // Basics
@@ -146,6 +147,14 @@ $lang['Proxmox.service_info.proxmox_ip'] = 'Primary IP Address';
 $lang['Proxmox.service_info.proxmox_username'] = 'Username';
 $lang['Proxmox.service_info.proxmox_password'] = 'Password';
 $lang['Proxmox.service_info.vm_username'] = 'root / Administrator';
+$lang['Proxmox.service_info.hostname'] = 'Hostname';
+$lang['Proxmox.service_info.login'] = 'Login';
+$lang['Proxmox.service_info.type'] = 'Type: ';
+$lang['Proxmox.service_info.vm_memory'] = 'Memory';
+$lang['Proxmox.service_info.cpu_usage'] = 'CPU Usage';
+$lang['Proxmox.service_info.netspeed'] = 'MB/s';
+$lang['Proxmox.service_info.uptime'] = 'Uptime';
+$lang['Proxmox.service_info.informations'] = 'Informations';
 
 
 // Tabs
@@ -195,7 +204,7 @@ $lang['Proxmox.tab_client_actions.field_reinstall_submit'] = 'Reinstall';
 $lang['Proxmox.tab_stats.heading_stats'] = 'Statistics';
 
 $lang['Proxmox.tab_stats.memory'] = 'Memory:';
-$lang['Proxmox.tab_stats.memory_stats'] = '%1$s/%2$s'; // %1$s is the memory used, %2$s is the total memory available
+$lang['Proxmox.tab_stats.memory_stats'] = '%1$s / %2$s'; // %1$s is the memory used, %2$s is the total memory available
 $lang['Proxmox.tab_stats.memory_percent_available'] = '(%1$s%%)'; // %1$s is the percentage of memory used. You MUST use two % signs to represent a single percent (i.e. %%)
 
 $lang['Proxmox.tab_stats.heading_graphs'] = 'Graphs';
