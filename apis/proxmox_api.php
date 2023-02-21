@@ -1,4 +1,5 @@
 <?php
+
 use Blesta\Core\Util\Common\Traits\Container;
 
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'proxmox_response.php';
@@ -121,6 +122,7 @@ class ProxmoxApi
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
         }
 
+        curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
 
@@ -146,21 +148,32 @@ class ProxmoxApi
 
         $response = curl_exec($ch);
 
-        if ($response == false) {
+        if (curl_errno($ch) || $response == false) {
+            $error = [
+                'error' => 'Curl Error',
+                'message' => 'An internal error occurred, or the server did not respond to the request.',
+                'status' => 500
+            ];
             $this->logger->error(curl_error($ch));
-        }
 
+            return new ProxmoxResponse(['content' => json_encode($error), 'headers' => []]);
+        }
         curl_close($ch);
 
-        return new ProxmoxResponse($response);
+        $data = explode("\n", $response);
+
+        return new ProxmoxResponse([
+            'content' => $data[count($data) - 1],
+            'headers' => array_splice($data, 0, count($data) - 1)
+        ]);
     }
 
     /**
      * Returns the details of the last request made
      *
-     * @return array An array containg:
+     * @return array An array containing:
      *  - url The URL of the last request
-     *  - args The paramters passed to the URL
+     *  - args The parameters passed to the URL
      */
     public function lastRequest()
     {

@@ -1,4 +1,5 @@
 <?php
+
 // Actions
 $lang['Proxmox.!actions.boot'] = 'Boot';
 $lang['Proxmox.!actions.shutdown'] = 'Shutdown';
@@ -16,8 +17,6 @@ $lang['Proxmox.!error.password.empty'] = 'Please enter a password.';
 $lang['Proxmox.!error.host.format'] = 'The hostname appears to be invalid.';
 $lang['Proxmox.!error.port.format'] = 'Please enter a valid port number.';
 $lang['Proxmox.!error.vmid.format'] = 'Please enter a valid VMID.';
-$lang['Proxmox.!error.storage.format'] = 'Please enter a valid storage.';
-$lang['Proxmox.!error.default_template.format'] = 'Please enter a valid default template.';
 $lang['Proxmox.!error.ips.empty'] = 'Please enter IPs.';
 
 $lang['Proxmox.!error.meta[type].valid'] = 'Please select a valid virtualization type.';
@@ -26,8 +25,9 @@ $lang['Proxmox.!error.meta[memory].format'] = 'Please set RAM.';
 $lang['Proxmox.!error.meta[cpu].format'] = 'Please set vCPU count.';
 $lang['Proxmox.!error.meta[hdd].format'] = 'Please set HDD size.';
 $lang['Proxmox.!error.meta[netspeed].format'] = 'Please set NetSpeed.';
-$lang['Proxmox.!error.meta[set_template].format'] = 'Please set whether to select a template or to allow clients to set a template.';
-$lang['Proxmox.!error.meta[template].empty'] = 'Please select a template.';
+$lang['Proxmox.!error.meta[default_template].empty'] = 'Please enter a valid template.';
+$lang['Proxmox.!error.meta[storage].format'] = 'Please enter a valid storage.';
+$lang['Proxmox.!error.meta[default_template].format'] = 'Please enter a valid default template.';
 
 $lang['Proxmox.!error.api.unknown'] = 'An unknown error occurred, please try again later.';
 $lang['Proxmox.!error.api.internal'] = 'An internal error occurred, or the server did not respond to the request.';
@@ -42,6 +42,8 @@ $lang['Proxmox.!error.api.confirm.valid'] = 'You must acknowledge that you under
 
 $lang['Proxmox.!error.proxmox_root_password.length'] = 'The root password must be at least 6 characters in length.';
 $lang['Proxmox.!error.proxmox_root_password.matches'] = 'The root passwords do not match.';
+
+$lang['Proxmox.!error.module_row.missing'] = 'An internal error occurred. The module row is unavailable.';
 
 
 // Common
@@ -87,17 +89,19 @@ $lang['Proxmox.row_meta.password'] = 'Password';
 $lang['Proxmox.row_meta.host'] = 'Hostname';
 $lang['Proxmox.row_meta.port'] = 'SSL Port Number';
 $lang['Proxmox.row_meta.vmid'] = 'Next VMID (do not change unless necessary!)';
-$lang['Proxmox.row_meta.storage'] = 'Default storage name (e.g. local)';
-$lang['Proxmox.row_meta.default_storage'] = 'local';
 $lang['Proxmox.row_meta.default_vmid'] = '200';
 $lang['Proxmox.row_meta.default_port'] = '8006';
-$lang['Proxmox.row_meta.default_template'] = 'Default template';
 $lang['Proxmox.row_meta.ips'] = 'IPs (one per line)';
 
 
 // Server types
-$lang['Proxmox.types.openvz'] = 'OpenVZ';
+$lang['Proxmox.types.lxc'] = 'LXC';
 $lang['Proxmox.types.kvm'] = 'KVM';
+
+
+// Set Unprivileged
+$lang['Proxmox.unprivileged.disabled'] = 'Disabled';
+$lang['Proxmox.unprivileged.enabled'] = 'Enabled';
 
 
 // Add module row
@@ -114,23 +118,38 @@ $lang['Proxmox.edit_row.add_btn'] = 'Update Server';
 
 // Package fields
 $lang['Proxmox.package_fields.type'] = 'Type';
+$lang['Proxmox.package_fields.storage'] = 'Storage Name';
+$lang['Proxmox.package_fields.gateway'] = 'Network Gateway';
+$lang['Proxmox.package_fields.template_storage'] = 'CT Template Storage Name';
+$lang['Proxmox.package_fields.default_template'] = 'Default Template';
 $lang['Proxmox.package_fields.hdd'] = 'Storage (GB)';
 $lang['Proxmox.package_fields.memory'] = 'RAM (MB)';
-$lang['Proxmox.package_fields.cpu'] = 'vCPU count';
-$lang['Proxmox.package_fields.netspeed'] = 'Network speed rate (MByte/s)';
+$lang['Proxmox.package_fields.cpu'] = 'vCPU Count';
+$lang['Proxmox.package_fields.netspeed'] = 'Network Speed Rate (MByte/s)';
+$lang['Proxmox.package_fields.cpulimit'] = 'CPU Limit';
+$lang['Proxmox.package_fields.cpuunits'] = 'CPU Units';
+$lang['Proxmox.package_fields.swap'] = 'SWAP (MB)';
+$lang['Proxmox.package_fields.unprivileged'] = 'Unprivileged';
 
 $lang['Proxmox.package_fields.assigned_nodes'] = 'Assigned Nodes';
 $lang['Proxmox.package_fields.available_nodes'] = 'Available Nodes';
 
+$lang['Proxmox.package_fields.tooltip.storage'] = 'The name of the rootfs disk storage location where new VMs and CTs will be placed (should exist on all assigned nodes).';
+$lang['Proxmox.package_fields.tooltip.template_storage'] = 'The name of the template storage location from which to fetch a list of templates.';
+
 
 // Service fields
 $lang['Proxmox.service_field.proxmox_hostname'] = 'Hostname';
+$lang['Proxmox.service_field.proxmox_password'] = 'Password';
 $lang['Proxmox.service_field.proxmox_template'] = 'Template';
+
+$lang['Proxmox.service_field.tooltip.password'] = 'You may leave the password blank to automatically generate one.';
 
 
 // Service Info fields
 $lang['Proxmox.service_info.proxmox_ip'] = 'Primary IP Address';
 $lang['Proxmox.service_info.proxmox_username'] = 'Username';
+$lang['Proxmox.service_info.proxmox_password'] = 'Password';
 
 
 // Tabs

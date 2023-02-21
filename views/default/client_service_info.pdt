@@ -5,6 +5,7 @@
                     <th><i class="fas fa-share fa-flip-vertical"></i></th>
                     <th><?php $this->_('Proxmox.service_info.proxmox_username');?></th>
                     <th><?php $this->_('Proxmox.service_info.proxmox_ip');?></th>
+                    <th><?php $this->_('Proxmox.service_info.proxmox_password');?></th>
                 </tr>
             </thead>
             <tbody>
@@ -12,6 +13,7 @@
                     <td></td>
                     <td><?php echo (isset($service_fields->proxmox_username) ? $this->Html->safe($service_fields->proxmox_username) : null);?></td>
                     <td><?php echo (isset($service_fields->proxmox_ip) ? $this->Html->safe($service_fields->proxmox_ip) : null);?></td>
+                    <td><?php echo (isset($service_fields->password) ? $this->Html->safe($service_fields->password) : null);?></td>
                 </tr>
             </tbody>
         </table>

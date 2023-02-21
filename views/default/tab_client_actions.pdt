@@ -22,23 +22,23 @@
     <div class="clearfix"></div>
     <div class="row options">
         <div class="col-md-4">
-            <a<?php echo (isset($server->status) ? $server->status : null) != 'running' ? ' disabled="disabled"' : '';?> class="btn btn-block btn-danger" href="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . (isset($service_id) ? $service_id : null) . '/tabClientActions/shutdown/');?>">
+            <a<?php echo (($server->status ?? null) != 'running') ? ' style="pointer-events: none"' : '';?> class="btn btn-block btn-danger <?php echo (($server->status ?? null) != 'running') ? 'disabled' : ''; ?>" href="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . ($service_id ?? null) . '/tabClientActions/shutdown/');?>">
                 <i class="fas fa-power-off"></i> <?php $this->_('Proxmox.!actions.shutdown');?>
             </a>
-            <a<?php echo (isset($type) ? $type : null) == 'qemu' ? ' disabled="disabled"' : '';?> class="reinstall btn btn-light btn-block" href="#">
+            <button<?php echo (($type ?? null) != 'lxc') ? ' disabled="disabled"' : '';?> class="reinstall btn btn-light btn-block" href="#">
                 <i class="fas fa-download"></i> <?php $this->_('Proxmox.!actions.reinstall');?>
-            </a>
+            </button>
         </div>
         <div class="col-md-4">
-            <a<?php echo (isset($server->status) ? $server->status : null) != 'stopped' ? ' disabled="disabled"' : '';?> class="btn btn-light btn-block" href="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . (isset($service_id) ? $service_id : null) . '/tabClientActions/boot/');?>">
+            <a<?php echo (($server->status ?? null) != 'stopped') ? ' style="pointer-events: none"' : '';?> class="btn btn-light btn-block <?php echo (($server->status ?? null) != 'stopped') ? 'disabled' : ''; ?>" href="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . ($service_id ?? null) . '/tabClientActions/boot/');?>">
                 <i class="fas fa-power-off"></i> <?php $this->_('Proxmox.!actions.boot');?>
             </a>
-            <a<?php echo (isset($type) ? $type : null) != 'qemu' ? ' disabled="disabled"' : '';?> class="mount_iso btn btn-light btn-block" href="#">
+            <button<?php echo (($type ?? null) != 'qemu') ? ' disabled="disabled"' : '';?> class="mount_iso btn btn-light btn-block" href="#">
                 <i class="fas fa-link"></i> <?php $this->_('Proxmox.!actions.mount_iso');?>
-            </a>
+            </button>
         </div>
         <div class="col-md-4">
-            <a<?php echo (isset($type) ? $type : null) != 'qemu' ? ' disabled="disabled"' : '';?> class="btn btn-light btn-block" href="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . (isset($service_id) ? $service_id : null) . '/tabClientActions/unmount/');?>">
+            <a<?php echo (($type ?? null) != 'qemu') ? ' style="pointer-events: none"' : '';?> class="btn btn-light btn-block <?php echo (($type ?? null) != 'qemu') ? 'disabled' : ''; ?>" href="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . ($service_id ?? null) . '/tabClientActions/unmount/');?>">
                 <i class="fas fa-unlink"></i> <?php $this->_('Proxmox.!actions.unmount_iso');?>
             </a>
         </div>
@@ -51,13 +51,13 @@
         <h4><?php $this->_('Proxmox.tab_client_actions.heading_mount_iso');?></h4>
 
         <?php
-        $this->Form->create($this->base_uri . 'services/manage/' . (isset($service_id) ? $service_id : null) . '/tabClientActions/mount/');
+        $this->Form->create($this->base_uri . 'services/manage/' . ($service_id ?? null) . '/tabClientActions/mount/');
         ?>
         <div class="w-100">
             <div class="form-group">
                 <?php
                 $this->Form->label($this->_('Proxmox.tab_client_actions.field_iso', true), 'iso');
-                $this->Form->fieldSelect('iso', (isset($isos) ? $isos : null), (isset($vars->iso) ? $vars->iso : null), ['id' => 'iso', 'class'=>'form-control']);
+                $this->Form->fieldSelect('iso', $isos ?? null, $vars->iso ?? null, ['id' => 'iso', 'class' => 'form-control']);
                 ?>
             </div>
         </div>
@@ -74,19 +74,19 @@
         <h4><?php $this->_('Proxmox.tab_client_actions.heading_reinstall');?></h4>
 
         <?php
-        $this->Form->create($this->base_uri . 'services/manage/' . (isset($service_id) ? $service_id : null) . '/tabClientActions/reinstall/');
+        $this->Form->create($this->base_uri . 'services/manage/' . ($service_id ?? null) . '/tabClientActions/reinstall/');
         ?>
         <div class="w-100">
             <div class="form-group">
                 <?php
                 $this->Form->label($this->_('Proxmox.tab_client_actions.field_template', true), 'template');
-                $this->Form->fieldSelect('template', (isset($templates) ? $templates : null), (isset($vars->template) ? $vars->template : null), ['id' => 'template', 'class'=>'form-control']);
+                $this->Form->fieldSelect('template', $templates ?? null, $vars->template ?? null, ['id' => 'template', 'class'=>'form-control']);
                 ?>
             </div>
             <div class="form-group">
                 <?php
                 $this->Form->label($this->_('Proxmox.tab_client_actions.field_password', true), 'password');
-                $this->Form->fieldText('password', '', ['id' => 'password', 'class'=>'form-control', 'placeholder'=>$this->_('Proxmox.tab_client_actions.field_password', true)]);
+                $this->Form->fieldText('password', '', ['id' => 'password', 'class'=>'form-control', 'placeholder' => $this->_('Proxmox.tab_client_actions.field_password', true)]);
                 ?>
             </div>
         </div>
@@ -100,19 +100,19 @@
 <script type="text/javascript">
 $(document).ready(function() {
     <?php
-    if ((isset($mount_iso) ? $mount_iso : false)) {
+    if ($mount_iso ?? false) {
     ?>
     showSection('mount_iso');
     <?php
     }
-    if ((isset($reinstall) ? $reinstall : false)) {
+    if ($reinstall ?? false) {
     ?>
     showSection('reinstall');
     <?php
     }
     ?>
 
-    $('.options a.mount_iso, .options a.reinstall').on('click', function(e) {
+    $('.options button.mount_iso, .options button.reinstall').on('click', function(e) {
         var item_class = ($(this).hasClass('mount_iso') ? "mount_iso" : "reinstall");
         hideSections();
         showSection(item_class);

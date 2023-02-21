@@ -55,6 +55,18 @@ class ProxmoxNodes
     }
 
     /**
+     * Get list of storage options
+     *
+     * @param array $vars An array of input params including:
+     *  - node Name of node
+     * @return ProxmoxResponse
+     */
+    public function storageList(array $vars)
+    {
+        return $this->api->submit('nodes/' .  $vars['node'] . '/storage');
+    }
+
+    /**
      * Get list of storage content
      *
      * @param array $vars An array of input params including:
