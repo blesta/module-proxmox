@@ -1450,7 +1450,7 @@ class Proxmox extends Module
 
         $this->view->set(
             'isos',
-            $this->getServerISOs($service_fields->proxmox_node, $package->meta->template_storage, $module_row)
+            $this->getServerISOs($service_fields->proxmox_node, $package->meta->storage, $module_row)
         );
         $this->view->set(
             'templates',
@@ -2697,19 +2697,25 @@ class Proxmox extends Module
                     'message' => Language::_('Proxmox.!error.meta[storage].format', true)
                 ]
             ],
-            'meta[default_template]' => [
-                'format' => [
-                    'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
-                    'message' => Language::_('Proxmox.!error.meta[default_template].format', true)
-                ]
-            ],
-            'meta[template_storage]' => [
-                'format' => [
-                    'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
-                    'message' => Language::_('Proxmox.!error.meta[storage].format', true)
-                ]
-            ],
+
         ];
+
+        if ($vars['meta']['type'] != 'qemu') {
+            $rules = [
+                'meta[default_template]' => [
+                    'format' => [
+                       'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
+                       'message' => Language::_('Proxmox.!error.meta[default_template].format', true)
+                    ]
+                ],
+                'meta[template_storage]' => [
+                    'format' => [
+                        'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
+                        'message' => Language::_('Proxmox.!error.meta[storage].format', true)
+                    ]
+                ],
+            ];
+        }
 
         return $rules;
     }
