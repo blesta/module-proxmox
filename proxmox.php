@@ -2696,8 +2696,7 @@ class Proxmox extends Module
                     'rule' => ['matches', '/^[0-9a-zA-Z\-]+$/'],
                     'message' => Language::_('Proxmox.!error.meta[storage].format', true)
                 ]
-            ],
-
+            ]
         ];
 
         if ($vars['meta']['type'] != 'qemu') {
@@ -2711,7 +2710,7 @@ class Proxmox extends Module
                 'meta[template_storage]' => [
                     'format' => [
                         'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
-                        'message' => Language::_('Proxmox.!error.meta[storage].format', true)
+                        'message' => Language::_('Proxmox.!error.meta[template_storage].format', true)
                     ]
                 ],
             ];
