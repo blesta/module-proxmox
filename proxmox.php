@@ -48,7 +48,7 @@ class Proxmox extends Module
                 Loader::loadModels($this, ['Packages']);
             }
 
-            // Update all module rows to have a
+            // Update all module rows
             $modules = $this->ModuleManager->getByClass('proxmox');
             foreach ($modules as $module) {
                 // Get rows and packages for the module
@@ -843,7 +843,7 @@ class Proxmox extends Module
      */
     public function getGroupOrderOptions()
     {
-        return ['first'=>Language::_('Proxmox.order_options.first', true)];
+        return ['first' => Language::_('Proxmox.order_options.first', true)];
     }
 
     /**
@@ -889,6 +889,9 @@ class Proxmox extends Module
         Loader::loadHelpers($this, ['Form', 'Html']);
 
         // Fetch all packages available for the given server or server group
+        if ($vars->module_group == 'select') {
+            $vars->module_group = null;
+        }
         $module_row = $this->getModuleRowByServer($vars->module_row ?? 0, $vars->module_group ?? '');
 
         // Load more server info when the type is set
@@ -1023,7 +1026,6 @@ class Proxmox extends Module
         );
         $fields->setField($type);
         unset($type);
-
 
         // Set Storage field
         $storage_options = $this->getNodeStorage(reset($assigned_nodes), $module_row);
@@ -1621,16 +1623,16 @@ class Proxmox extends Module
     }
 
    /**
-     * Handles data for the actions tab in the client and admin interfaces
-     * @see Proxmox::tabActions() and Proxmox::tabClientActions()
-     *
-     * @param stdClass $package A stdClass object representing the current package
-     * @param stdClass $service A stdClass object representing the current service
-     * @param bool $client True if the action is being performed by the client, false otherwise
-     * @param array $get Any GET parameters
-     * @param array $post Any POST parameters
-     * @param array $files Any FILES parameters
-     */
+    * Handles data for the actions tab in the client and admin interfaces
+    * @see Proxmox::tabActions() and Proxmox::tabClientActions()
+    *
+    * @param stdClass $package A stdClass object representing the current package
+    * @param stdClass $service A stdClass object representing the current service
+    * @param bool $client True if the action is being performed by the client, false otherwise
+    * @param array $get Any GET parameters
+    * @param array $post Any POST parameters
+    * @param array $files Any FILES parameters
+    */
     private function statsTabGraph($package, $service, $client = false, array $get = null, array $post = null)
     {
         $vars = [];
@@ -2523,7 +2525,7 @@ class Proxmox extends Module
     {
         // Fetch the module row available for this package
         $row = null;
-        if ($module_group == '') {
+        if (empty($module_group)) {
             if ($module_row > 0) {
                 $row = $this->getModuleRow($module_row);
             } else {
