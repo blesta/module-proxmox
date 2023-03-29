@@ -1941,7 +1941,7 @@ class Proxmox extends Module
         $hours= floor(($seconds % 86400) / 3600);
         $minutes = floor(($seconds % 3600) / 60);
 
-        return "$days days, $hours hours, $minutes minutes";
+        return Language::_('Proxmox.!uptime.value', true, $days, $hours, $minutes);
     }
 
     /**

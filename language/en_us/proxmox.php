@@ -50,7 +50,7 @@ $lang['Proxmox.!error.module_row.missing'] = 'An internal error occurred. The mo
 // Common
 $lang['Proxmox.please_select'] = '-- Please Select --';
 $lang['Proxmox.!bytes.value'] = '%1$s%2$s'; // %1$s is a number value, %2$s is the unit of that value (i.e., one of B, KB, MB, GB)
-$lang['Proxmox.!seconds.value'] = '%1$s%2$s'; // %1$s is a time value, %2$s is the unit of that value (i.e., one of seconds, hours, days)
+$lang['Proxmox.!uptime.value'] = '%3$s days, %2$s hours, %1$s minutes'; // %1$s is the number of uptime days, %2$s is the number of uptime hours, %3$s is the number of uptime minutes
 $lang['Proxmox.!percent.used'] = '%1$s%'; // %1$s is a percentage value
 
 // Basics
@@ -161,6 +161,8 @@ $lang['Proxmox.service_info.cpu_usage'] = 'CPU Usage';
 $lang['Proxmox.service_info.netspeed'] = 'MB/s';
 $lang['Proxmox.service_info.uptime'] = 'Uptime';
 $lang['Proxmox.service_info.informations'] = 'Informations';
+$lang['Proxmox.service_info.vcpu'] = 'vCPU';
+$lang['Proxmox.service_info.memory'] = 'MB RAM';
 
 
 // Tabs
@@ -176,9 +178,6 @@ $lang['Proxmox.tab_actions.status_running'] = 'Online';
 $lang['Proxmox.tab_actions.status_stopped'] = 'Offline';
 $lang['Proxmox.tab_actions.status_disabled'] = 'Disabled';
 $lang['Proxmox.tab_actions.server_status'] = 'Server Status';
-
-$lang['Proxmox.service_info.vcpu'] = 'vCPU';
-$lang['Proxmox.service_info.memory'] = 'RAM';
 
 $lang['Proxmox.tab_actions.heading_mount_iso'] = 'Mount ISO';
 $lang['Proxmox.tab_actions.heading_reinstall'] = 'Reinstall';
