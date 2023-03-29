@@ -28,6 +28,7 @@ $lang['Proxmox.!error.meta[netspeed].format'] = 'Please set NetSpeed.';
 $lang['Proxmox.!error.meta[default_template].empty'] = 'Please enter a valid template.';
 $lang['Proxmox.!error.meta[storage].format'] = 'Please enter a valid storage.';
 $lang['Proxmox.!error.meta[default_template].format'] = 'Please enter a valid default template.';
+$lang['Proxmox.!error.meta[template_storage].format'] = 'Please enter a valid template storage.';
 
 $lang['Proxmox.!error.api.unknown'] = 'An unknown error occurred, please try again later.';
 $lang['Proxmox.!error.api.internal'] = 'An internal error occurred, or the server did not respond to the request.';

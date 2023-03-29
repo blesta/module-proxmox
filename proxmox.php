@@ -2699,14 +2699,16 @@ class Proxmox extends Module
             ],
             'meta[default_template]' => [
                 'format' => [
+                    'if_set' => true,
                     'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
                     'message' => Language::_('Proxmox.!error.meta[default_template].format', true)
                 ]
             ],
             'meta[template_storage]' => [
                 'format' => [
+                    'if_set' => true,
                     'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
-                    'message' => Language::_('Proxmox.!error.meta[storage].format', true)
+                    'message' => Language::_('Proxmox.!error.meta[template_storage].format', true)
                 ]
             ],
         ];
