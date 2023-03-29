@@ -14,9 +14,99 @@
             break;
     }
     ?>
-    <span class="badge badge-<?php echo (isset($status_class) ? $this->Html->safe($status_class) : null);?> mb-3">
-        <i class="fas fa-lightbulb"></i> <?php $this->_('Proxmox.tab_client_actions.status_' . (isset($server->status) ? $this->Html->safe($server->status) : null));?>
-    </span>
+
+<!-- Style for icons -->
+<style>
+    .s-boxes {
+        display: inline-block;
+        justify-content: center;
+        text-align: center;
+        padding: 15px 6px;
+    }
+    .pad {
+        padding: 6px;
+    }
+    .full-width {
+        width: 100%;
+        display: block;
+    }
+
+</style>
+
+    <!--Actual code for gui -->
+    <div class="row">
+        <div class="col-sm-3">
+            <span class="s-boxes"><i class="fa fa-microchip fa-2x"></i><br> <b><?php echo (isset($service_fields->proxmox_cpu) ? $this->Html->safe($service_fields->proxmox_cpu) : null);?> <?php $this->_('Proxmox.service_info.vcpu');?></b></span>
+        </div>
+        <div class="col-sm-3">
+            <span class="s-boxes"><i class="fa fa-database fa-2x"></i><br> <b><?php echo (isset($service_fields->proxmox_memory) ? $this->Html->safe($service_fields->proxmox_memory) : null);?> <?php $this->_('Proxmox.service_info.memory');?></b></span>
+        </div>
+        <div class="col-sm-3">
+            <span class="s-boxes"><i class="fa fa-server fa-2x"></i><br> <b><?php $this->_('Proxmox.service_info.type');?><?php echo (isset($service_fields->proxmox_type) ? $this->Html->safe($service_fields->proxmox_type) : null);?></b></span>
+        </div>
+        <div class="col-sm-3">
+            <span class="s-boxes"><i class="fa fa-ethernet fa-2x"></i><br> <b><?php echo (isset($service_fields->proxmox_netspeed) ? $this->Html->safe($service_fields->proxmox_netspeed) : null);?> <?php $this->_('Proxmox.service_info.netspeed');?></b></span>
+        </div>
+    </div>
+    <hr />
+    <!--Test Table, ignore it now v -->
+    <table class="table table-curved table-striped">
+        <thead>
+            <tr>
+                <th><?php $this->_('Proxmox.service_info.informations');?></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><?php $this->_('Proxmox.tab_client_actions.heading_server_status');?></td>
+                <td>
+                    <span class="badge badge-<?php echo (isset($status_class) ? $this->Html->safe($status_class) : null);?>">
+                     <i class="fas fa-lightbulb fa-1x"></i> <?php $this->_('Proxmox.tab_client_actions.status_' . (isset($server->status) ? $this->Html->safe($server->status) : null));?></td>
+                    </span>
+            </tr>
+            <tr>
+                <td><?php $this->_('Proxmox.service_info.login');?></td>
+                <td><?php $this->_('Proxmox.service_info.vm_username');?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_('Proxmox.service_info.proxmox_ip');?></td>
+                <td><?php echo (isset($service_fields->proxmox_ip) ? $this->Html->safe($service_fields->proxmox_ip) : null);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_('Proxmox.service_info.hostname');?></td>
+                <td><?php echo (isset($service_fields->proxmox_hostname) ? $this->Html->safe($service_fields->proxmox_hostname) : null);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_('Proxmox.service_info.uptime');?></td>
+                <td><?php echo (isset($server->uptime_formatted) ? $this->Html->safe($server->uptime_formatted) : null);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_('Proxmox.service_info.cpu_usage');?></td>
+                <td><?php echo (isset($server->cpu_formatted) ? $this->Html->safe($server->cpu_formatted) : null);?> %</td>
+            </tr>
+            <tr>
+                <td><?php $this->_('Proxmox.service_info.proxmox_password');?></td>
+                <td><?php echo (isset($service_fields->password) ? $this->Html->safe($service_fields->password) : null);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_('Proxmox.service_info.vm_memory');?></td>
+                <td>
+                   <?php
+                     $keys = ['mem_formatted' => 'memory'];
+                                foreach ($keys as $key => $name) {
+                                    if ((isset($server->{$key}) ? $server->{$key} : false)) {
+                                        $percent_used = (isset($server->{$key}['percent_used_' . $name]) ? $this->Html->safe($server->{$key}['percent_used_' . $name]) : null);
+                                ?>
+                                    <span class="buff <?php echo $percent_used > 80 ? 'stopped' : 'running';?>"><?php $this->_('Proxmox.tab_stats.' . $name . '_stats', false, (isset($server->{$key}['used_' . $name . '_formatted']) ? $this->Html->safe($server->{$key}['used_' . $name . '_formatted']) : null), (isset($server->{$key}['total_' . $name . '_formatted']) ? $this->Html->safe($server->{$key}['total_' . $name . '_formatted']) : null));?></span>
+                                    <?php $this->_('Proxmox.tab_stats.' . $name . '_percent_available', false, $percent_used);?>
+                                <?php
+                                    }
+                                }
+                                ?></td>
+            </tr>
+        </tbody>
+     </table>
     <hr />
     <h4><?php $this->_('Proxmox.tab_client_actions.heading_actions');?></h4>
     <div class="clearfix"></div>
