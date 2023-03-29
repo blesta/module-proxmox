@@ -1028,7 +1028,11 @@ class Proxmox extends Module
         unset($type);
 
         // Set Storage field
-        $storage_options = $this->getNodeStorage(reset($assigned_nodes), $module_row);
+        $storage_options = $this->getNodeStorage(
+            reset($assigned_nodes),
+            $module_row,
+            ($vars->meta['type'] ?? null) === 'lxc' ? 'rootdir' : 'images'
+        );
         $storage = $fields->label(Language::_('Proxmox.package_fields.storage', true), 'proxmox_storage');
         $storage->attach(
             $fields->fieldSelect(
@@ -1044,6 +1048,7 @@ class Proxmox extends Module
         $fields->setField($storage);
         if (($vars->meta['type'] ?? null) === 'lxc') {
             // Set template storage field
+            $lxc_storage_options = $this->getNodeStorage(reset($assigned_nodes), $module_row, 'vztmpl');
             $template_storage = $fields->label(
                 Language::_('Proxmox.package_fields.template_storage', true),
                 'proxmox_template_storage'
@@ -1051,7 +1056,7 @@ class Proxmox extends Module
             $template_storage->attach(
                 $fields->fieldSelect(
                     'meta[template_storage]',
-                    $storage_options,
+                    $lxc_storage_options,
                     $vars->meta['template_storage'] ?? 'local',
                     ['id' => 'proxmox_template_storage']
                 )
@@ -2129,9 +2134,10 @@ class Proxmox extends Module
      *
      * @param string $node The node of the server
      * @param stdClass $module_row A stdClass object representing a single server
+     * @param string $content_type The content type by which to filter storage options
      * @return stdClass An stdClass object representing the server storage options
      */
-    private function getNodeStorage($node, $module_row)
+    private function getNodeStorage($node, $module_row, $content_type = null)
     {
         $api = $this->getApi(
             $module_row->meta->user,
@@ -2156,7 +2162,7 @@ class Proxmox extends Module
 
         $result = [];
         foreach ($response->data as $storage) {
-            if (strpos($storage->content ?? '', 'vztmpl') !== false) {
+            if ($content_type === null || strpos($storage->content ?? '', $content_type) !== false) {
                 $result[$storage->storage] = $storage->storage;
             }
         }
