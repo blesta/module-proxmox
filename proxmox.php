@@ -762,6 +762,11 @@ class Proxmox extends Module
             $vars = $module_row->meta;
         }
 
+        // Serialize password variable with ***
+        if (isset($vars->password)) {
+            $vars->password = '***';
+        }
+
         $this->view->set('vars', (object)$vars);
         return $this->view->fetch();
     }
