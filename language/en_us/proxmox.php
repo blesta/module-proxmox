@@ -86,7 +86,7 @@ $lang['Proxmox.order_options.first'] = 'First non-full server';
 
 // Module row meta data
 $lang['Proxmox.row_meta.server_name'] = 'Server Label';
-$lang['Proxmox.row_meta.user'] = 'User';
+$lang['Proxmox.row_meta.user'] = 'User (with @pam or @pve after the username)';
 $lang['Proxmox.row_meta.password'] = 'Password';
 $lang['Proxmox.row_meta.host'] = 'Hostname';
 $lang['Proxmox.row_meta.port'] = 'SSL Port Number';
