@@ -761,6 +761,9 @@ class Proxmox extends Module
         if (empty($vars)) {
             $vars = $module_row->meta;
         }
+        
+        // Mask password by replacing with ***
+        $vars->password = '***';
 
         $this->view->set('vars', (object)$vars);
         return $this->view->fetch();
@@ -816,6 +819,11 @@ class Proxmox extends Module
      */
     public function editModuleRow($module_row, array &$vars)
     {
+        // If the replacement sting is submitted, replace with the stored password
+        if (isset($vars['password']) && $vars['password'] == '***') {
+            $vars['password'] = $module_row->meta->password;
+        }
+        
         // Same as adding
         return $this->addModuleRow($vars);
     }
