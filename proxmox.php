@@ -760,11 +760,11 @@ class Proxmox extends Module
 
         if (empty($vars)) {
             $vars = $module_row->meta;
+            
             // Mask password by replacing with ***
             $vars->password = '***';
         }
         
-
         $this->view->set('vars', (object)$vars);
         return $this->view->fetch();
     }
