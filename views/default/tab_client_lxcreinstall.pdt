@@ -1,0 +1,26 @@
+    <h4><?php $this->_('Proxmox.tab_client_actions.heading_reinstall');?></h4>
+    <div class="table-responsive">
+        <table class="table table-striped">
+                <?php
+                $this->Form->create($this->base_uri . 'services/manage/' . ($service_id ?? null) . '/tabClientLXCReinstall/reinstall/');
+                ?>
+                <div class="form-group">
+                    <?php
+                    $this->Form->label($this->_('Proxmox.tab_client_lxcreinstall.field_template', true), 'template');
+                    $this->Form->fieldSelect('template', $templates ?? null, $vars->template ?? null, ['id' => 'template', 'class'=>'form-control']);
+                    ?>
+                </div>
+                <div class="form-group">
+                    <?php
+                    $this->Form->label($this->_('Proxmox.tab_client_lxcreinstall.field_password', true), 'password');
+                    $this->Form->fieldText('password', '', ['id' => 'password', 'class'=>'form-control', 'placeholder' => $this->_('Proxmox.tab_client_lxcreinstall.field_password', true)]);
+                    ?>
+                </div>
+            <button class="btn btn-light float-right">
+                <i class="fas fa-download"></i> <?php $this->_('Proxmox.tab_client_lxcreinstall.field_reinstall_submit');?>
+            </button>
+            <?php
+            $this->Form->end();
+            ?>
+        </table>
+    </div>

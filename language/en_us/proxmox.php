@@ -169,6 +169,8 @@ $lang['Proxmox.service_info.memory'] = 'MB RAM';
 $lang['Proxmox.tab_actions'] = 'Server Actions';
 $lang['Proxmox.tab_stats'] = 'Stats';
 $lang['Proxmox.tab_console'] = 'Console';
+$lang['Proxmox.tab_isomanager'] = 'ISO Manager';
+$lang['Proxmox.tab_lxcreinstall'] = 'Reinstall';
 
 
 // Actions Tab
@@ -196,13 +198,7 @@ $lang['Proxmox.tab_client_actions.status_running'] = 'Online';
 $lang['Proxmox.tab_client_actions.status_stopped'] = 'Offline';
 $lang['Proxmox.tab_client_actions.status_disabled'] = 'Disabled';
 
-$lang['Proxmox.tab_client_actions.heading_mount_iso'] = 'Mount ISO';
 $lang['Proxmox.tab_client_actions.heading_reinstall'] = 'Reinstall';
-$lang['Proxmox.tab_client_actions.field_iso'] = 'Image';
-$lang['Proxmox.tab_client_actions.field_mount_submit'] = 'Mount';
-$lang['Proxmox.tab_client_actions.field_template'] = 'Template';
-$lang['Proxmox.tab_client_actions.field_password'] = 'Root password';
-$lang['Proxmox.tab_client_actions.field_reinstall_submit'] = 'Reinstall';
 
 
 // Stats Tab
@@ -237,3 +233,15 @@ $lang['Proxmox.tab_client_console.vnc_ip'] = 'VNC Host';
 $lang['Proxmox.tab_client_console.vnc_port'] = 'VNC Port';
 $lang['Proxmox.tab_client_console.vnc_user'] = 'VNC Username';
 $lang['Proxmox.tab_client_console.vnc_password'] = 'VNC Password';
+
+// Client LXC Reinstall Tab
+$lang['Proxmox.tab_client_lxcreinstall.heading_lxcreinstall'] = 'Reinstall';
+$lang['Proxmox.tab_client_lxcreinstall.field_password'] = 'Root password';
+$lang['Proxmox.tab_client_lxcreinstall.field_template'] = 'Template';
+$lang['Proxmox.tab_client_lxcreinstall.field_reinstall_submit'] = 'Reinstall';
+
+// Client ISO Manager Tab
+$lang['Proxmox.tab_client_isomanager.heading_isomanager'] = 'ISO Manager';
+$lang['Proxmox.tab_client_isomanager.field_iso'] = 'Image';
+$lang['Proxmox.tab_client_isomanager.field_mount_submit'] = 'Mount';
+$lang['Proxmox.tab_client_isomanager.field_unmount_submit'] = 'Unmount ISO';

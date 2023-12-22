@@ -1,0 +1,25 @@
+    <h4><?php $this->_('Proxmox.tab_client_isomanager.heading_isomanager');?></h4>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <?php
+            $this->Form->create($this->base_uri . 'services/manage/' . ($service_id ?? null) . '/tabClientIsoManager/mount/');
+            ?>
+            <div class="w-100">
+             <div class="form-group">
+                   <?php
+                   $this->Form->label($this->_('Proxmox.tab_client_isomanager.field_iso', true), 'iso');
+                   $this->Form->fieldSelect('iso', $isos ?? null, $vars->iso ?? null, ['id' => 'iso', 'class' => 'form-control']);
+                   ?>
+                </div>
+            </div>
+            <button class="btn btn-light float-right">
+                <i class="fas fa-link"></i> <?php $this->_('Proxmox.tab_client_isomanager.field_mount_submit');?>
+            </button>
+            <a class="btn btn-light float-left" href="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . ($service_id ?? null) . '/tabClientIsoManager/unmount/');?>">
+                <i class="fas fa-unlink"></i> <?php $this->_('Proxmox.tab_client_isomanager.field_unmount_submit');?>
+            </a>
+            <?php
+            $this->Form->end();
+            ?>
+        </table>
+    </div>
