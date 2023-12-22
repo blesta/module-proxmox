@@ -50,7 +50,7 @@ $lang['Proxmox.!error.module_row.missing'] = 'An internal error occurred. The mo
 // Common
 $lang['Proxmox.please_select'] = '-- Please Select --';
 $lang['Proxmox.!bytes.value'] = '%1$s%2$s'; // %1$s is a number value, %2$s is the unit of that value (i.e., one of B, KB, MB, GB)
-$lang['Proxmox.!uptime.value'] = '%3$s days, %2$s hours, %1$s minutes'; // %1$s is the number of uptime days, %2$s is the number of uptime hours, %3$s is the number of uptime minutes
+$lang['Proxmox.!uptime.value'] = '%1$s days, %2$s hours, %3$s minutes'; // %1$s is the number of uptime days, %2$s is the number of uptime hours, %3$s is the number of uptime minutes
 $lang['Proxmox.!percent.used'] = '%1$s%'; // %1$s is a percentage value
 
 // Basics
