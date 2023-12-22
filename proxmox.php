@@ -1344,11 +1344,11 @@ class Proxmox extends Module
      */
     public function getAdminTabs($package)
     {
-        return [
-            'tabActions' => Language::_('Proxmox.tab_actions', true),
-            'tabStats' => Language::_('Proxmox.tab_stats', true),
-            'tabConsole' => Language::_('Proxmox.tab_console', true),
-        ];
+            return [
+                'tabActions' => Language::_('Proxmox.tab_actions', true),
+                'tabStats' => Language::_('Proxmox.tab_stats', true),
+                'tabConsole' => Language::_('Proxmox.tab_console', true),
+            ];
     }
 
     /**
@@ -1361,11 +1361,23 @@ class Proxmox extends Module
      */
     public function getClientTabs($package)
     {
-        return [
-            'tabClientActions' => Language::_('Proxmox.tab_actions', true),
-            'tabClientStats' => Language::_('Proxmox.tab_stats', true),
-            'tabClientConsole' => Language::_('Proxmox.tab_console', true),
-        ];
+
+        if (($package->meta->type ?? null) === 'qemu')  {
+            return [
+                'tabClientActions' => Language::_('Proxmox.tab_actions', true),
+                'tabClientStats' => Language::_('Proxmox.tab_stats', true),
+                'tabClientConsole' => Language::_('Proxmox.tab_console', true),
+                'tabClientIsoManager' => Language::_('Proxmox.tab_isomanager', true),
+            ];
+
+        } else {
+            return [
+                'tabClientActions' => Language::_('Proxmox.tab_actions', true),
+                'tabClientStats' => Language::_('Proxmox.tab_stats', true),
+                'tabClientConsole' => Language::_('Proxmox.tab_console', true),
+                'tabClientLXCReinstall' => Language::_('Proxmox.tab_lxcreinstall', true),
+            ];
+        }
     }
 
     /**
@@ -1453,14 +1465,6 @@ class Proxmox extends Module
         // Set default vars
         $vars = ['hostname' => $service_fields->proxmox_hostname];
 
-        $this->view->set(
-            'isos',
-            $this->getServerISOs($service_fields->proxmox_node, $package->meta->storage, $module_row)
-        );
-        $this->view->set(
-            'templates',
-            $this->getServerTemplates($service_fields->proxmox_node, $package->meta->template_storage, $module_row)
-        );
         $this->view->set('type', $service_fields->proxmox_type);
 
         // Fetch the server status
@@ -1620,6 +1624,11 @@ class Proxmox extends Module
                         $this->log($row->meta->host . '|vserver-create', serialize($masked_params), 'input', true);
                         $response = $this->parseResponse($server_api->create($params), $row);
                     }
+
+                    sleep(5);
+
+                    // Attempt to start the VM
+                    $this->performAction('boot', $params['vmid'], $params['type'], $params['node'], $module_row, [], true);
 
                     break;
                 default:
@@ -1906,6 +1915,142 @@ class Proxmox extends Module
         $this->view->set('node_statistics', $this->getNodeStatistics($service_fields->proxmox_node, $module_row));
         $this->view->set('console', (object)$session);
 
+        $this->view->setDefaultView('components' . DS . 'modules' . DS . 'proxmox' . DS);
+        return $this->view;
+    }
+
+    /**
+     * Client ISO Manager tab
+     *
+     * @param stdClass $package A stdClass object representing the current package
+     * @param stdClass $service A stdClass object representing the current service
+     * @param array $get Any GET parameters
+     * @param array $post Any POST parameters
+     * @param array $files Any FILES parameters
+     * @return string The string representing the contents of this tab
+     */
+    public function tabClientIsoManager($package, $service, array $get = null, array $post = null, array $files = null)
+    {
+        $view = $this->isoManager($package, $service, $get, $post, true);
+        return $view->fetch();
+    }
+
+    /**
+     * Builds the data for the admin/client ISO manager tabs
+     * @see Proxmox::tabClientIsoManager()
+     *
+     * @param stdClass $package A stdClass object representing the current package
+     * @param stdClass $service A stdClass object representing the current service
+     * @return View A template view to be rendered
+     */
+    private function isoManager($package, $service, $get = null, $post = null, $client = false){
+
+        $template = ($client ? 'tab_client_isomanager' : '');
+        $this->view = new View($template, 'default');
+        // Load the helpers required for this view
+        Loader::loadHelpers($this, ['Form', 'Html']);
+
+        // Get the service fields
+        $service_fields = $this->serviceFieldsToObject($service->fields);
+        $module_row = $this->getModuleRow($package->module_row);
+
+        // Perform the actions
+        $this->actionsTab($package, $service, true, $get, $post);
+
+        // Set default vars
+        $vars = ['hostname' => $service_fields->proxmox_hostname];
+        $this->view->set(
+            'isos',
+            $this->getServerISOs($service_fields->proxmox_node, $package->meta->storage, $module_row)
+        );
+
+        $this->view->set('client_id', $service->client_id);
+        $this->view->set('service_id', $service->id);
+
+        $this->view->base_uri = $this->base_uri;
+        $this->view->set(
+            'server',
+            $this->getServerState(
+                $service_fields->proxmox_vserver_id,
+                $service_fields->proxmox_type,
+                $service_fields->proxmox_node,
+                $module_row
+            )
+        );
+
+        $this->view->set('type', $service_fields->proxmox_type);
+        $this->view->set('vars', (object)$vars);
+        $this->view->set('service_fields', $this->serviceFieldsToObject($service->fields));
+
+        $this->view->set('view', $this->view->view);
+        $this->view->setDefaultView('components' . DS . 'modules' . DS . 'proxmox' . DS);
+        return $this->view;
+    }
+
+    /**
+     * Client LXC Reinstall tab
+     *
+     * @param stdClass $package A stdClass object representing the current package
+     * @param stdClass $service A stdClass object representing the current service
+     * @param array $get Any GET parameters
+     * @param array $post Any POST parameters
+     * @param array $files Any FILES parameters
+     * @return string The string representing the contents of this tab
+     */
+    public function tabClientLXCReinstall($package, $service, array $get = null, array $post = null, array $files = null)
+    {
+        $view = $this->lxcReinstall($package, $service, $get, $post, true);
+        return $view->fetch();
+    }
+
+    /**
+     * Builds the data for the admin/client lxc reinstall tabs
+     * @see Proxmox::tabClientLXCReinstall()
+     *
+     * @param stdClass $package A stdClass object representing the current package
+     * @param stdClass $service A stdClass object representing the current service
+     * @return View A template view to be rendered
+     */
+    private function lxcReinstall($package, $service, $get = null, $post = null, $client = false)
+    {
+        $template = ($client ? 'tab_client_lxcreinstall' : '');
+        $this->view = new View($template, 'default');
+        // Load the helpers required for this view
+        Loader::loadHelpers($this, ['Form', 'Html']);
+
+        // Get the service fields
+        $service_fields = $this->serviceFieldsToObject($service->fields);
+        $module_row = $this->getModuleRow($package->module_row);
+
+        // Perform the actions
+        $this->actionsTab($package, $service, true, $get, $post);
+
+        // Set default vars
+        $vars = ['hostname' => $service_fields->proxmox_hostname];
+
+        $this->view->set('client_id', $service->client_id);
+        $this->view->set('service_id', $service->id);
+
+        $this->view->base_uri = $this->base_uri;
+        $this->view->set(
+            'server',
+            $this->getServerState(
+                $service_fields->proxmox_vserver_id,
+                $service_fields->proxmox_type,
+                $service_fields->proxmox_node,
+                $module_row
+            )
+        );
+        $this->view->set(
+            'templates',
+            $this->getServerTemplates($service_fields->proxmox_node, $package->meta->template_storage, $module_row)
+        );
+
+        $this->view->set('type', $service_fields->proxmox_type);
+        $this->view->set('vars', (object)$vars);
+        $this->view->set('service_fields', $this->serviceFieldsToObject($service->fields));
+
+        $this->view->set('view', $this->view->view);
         $this->view->setDefaultView('components' . DS . 'modules' . DS . 'proxmox' . DS);
         return $this->view;
     }
@@ -2275,7 +2420,7 @@ class Proxmox extends Module
 
         $fields = [
             'type' => $package->meta->type,
-            'template' => $package->meta->template_storage . ':vztmpl/' . $package->meta->default_template ?? null,
+            'template' => ($package->meta->template_storage ?? null) . ':vztmpl/' . ($package->meta->default_template ?? null),
             'template_storage' => $package->meta->template_storage ?? null,
             'node' => $node,
             'hostname' => isset($vars['proxmox_hostname']) ? strtolower($vars['proxmox_hostname']) : null,
