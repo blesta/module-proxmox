@@ -75,7 +75,23 @@ class ProxmoxApi
 
         $this->login();
     }
-
+    function getMainDomain($subdomain) {
+        $urlParts = parse_url($subdomain);
+    
+        // Memeriksa apakah parse_url berhasil dan mengandung bagian host
+        if ($urlParts && isset($urlParts['host'])) {
+            $hostParts = explode('.', $urlParts['host']);
+    
+            // Memeriksa apakah ada setidaknya dua bagian pada domain (misal: example.com)
+            if (count($hostParts) >= 2) {
+                // Mengambil dua bagian terakhir untuk mendapatkan domain utama
+                $mainDomain = $hostParts[count($hostParts) - 2] . '.' . $hostParts[count($hostParts) - 1];
+                return $mainDomain;
+            }
+        }
+    
+        return null; // Mengembalikan null jika tidak dapat menemukan domain utama
+    }
     public function login()
     {
         $res = $this->submit('access/ticket', [
@@ -87,6 +103,7 @@ class ProxmoxApi
             $this->ticket = $res->data->ticket;
             $this->username_from_ticket = $res->data->username;
             $this->csrf_prevention_token = $res->data->CSRFPreventionToken;
+            setcookie("PVEAuthCookie",$res->data->ticket, 0, "/", '.'.$this->getMainDomain($_SERVER['SERVER_NAME']) );
         }
     }
 
