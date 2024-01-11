@@ -3,12 +3,15 @@
         <h3><?php $this->_('Proxmox.tab_console.heading_console');?></h3>
     </div>
     <div class="pad">
-        <ul>
-            <li><?php $this->_('Proxmox.tab_console.vnc_ip');?> <?php echo (isset($console->vnc_ip) ? $this->Html->safe($console->vnc_ip) : null);?></li>
-            <li><?php $this->_('Proxmox.tab_console.vnc_port');?> <?php echo (isset($console->vnc_port) ? $this->Html->safe($console->vnc_port) : null);?></li>
-            <li><?php $this->_('Proxmox.tab_console.vnc_user');?> <?php echo (isset($console->vnc_user) ? $this->Html->safe($console->vnc_user) : null);?></li>
-            <li><?php $this->_('Proxmox.tab_console.vnc_password');?> <?php echo (isset($console->vnc_password) ? $this->Html->safe($console->vnc_password) : null);?></li>
-        </ul>
+    <?php 
+        if($service_fields->proxmox_type == 'kvm'){
+            $vncType = "qemu";
+        }else{
+            $vncType = "lxc";
+        }
+        $url_vnc = "https://".$console->vnc_ip."/?console=".$service_fields->proxmox_type."&novnc=1&node=".$service_fields->proxmox_node."&resize=1&vmid=".$service_fields->proxmox_vserver_id."&path=api2/json/nodes/".$service_fields->proxmox_node."/".$vncType."/".$service_fields->proxmox_vserver_id."/vncwebsocket/port/".$console->vnc_port."/vncticket/".$console->vnc_password;
+        echo '<iframe src="'.$url_vnc.'" frameborder="0" scrolling="no" width="100%" height="800px"></iframe>';
+    ?>
     </div>
 
 <script type="text/javascript">
