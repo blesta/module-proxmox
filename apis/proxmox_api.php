@@ -103,7 +103,7 @@ class ProxmoxApi
             $this->ticket = $res->data->ticket;
             $this->username_from_ticket = $res->data->username;
             $this->csrf_prevention_token = $res->data->CSRFPreventionToken;
-            setcookie("PVEAuthCookie",$res->data->ticket, 0, "/", '.'.$this->getMainDomain($_SERVER['SERVER_NAME']) );
+            setcookie("PVEAuthCookie",$res->data->ticket, 0, "/", '.'.$this->getMainDomain('https://'.$_SERVER['SERVER_NAME']) );
         }
     }
 
