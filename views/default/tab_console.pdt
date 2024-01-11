@@ -4,12 +4,7 @@
     </div>
     <div class="pad">
     <?php 
-        if($service_fields->proxmox_type == 'kvm'){
-            $vncType = "qemu";
-        }else{
-            $vncType = "lxc";
-        }
-        $url_vnc = "https://".$console->vnc_ip."/?console=".$service_fields->proxmox_type."&novnc=1&node=".$service_fields->proxmox_node."&resize=1&vmid=".$service_fields->proxmox_vserver_id."&path=api2/json/nodes/".$service_fields->proxmox_node."/".$vncType."/".$service_fields->proxmox_vserver_id."/vncwebsocket/port/".$console->vnc_port."/vncticket/".$console->vnc_password;
+        $url_vnc = "https://".$console->vnc_ip."/?console=".$service_fields->proxmox_type."&novnc=1&node=".$service_fields->proxmox_node."&resize=1&vmid=".$service_fields->proxmox_vserver_id."&path=api2/json/nodes/".$service_fields->proxmox_node."/".$service_fields->proxmox_type."/".$service_fields->proxmox_vserver_id."/vncwebsocket/port/".$console->vnc_port."/vncticket/".$console->vnc_password;
         echo '<iframe src="'.$url_vnc.'" frameborder="0" scrolling="no" width="100%" height="800px"></iframe>';
     ?>
     </div>
