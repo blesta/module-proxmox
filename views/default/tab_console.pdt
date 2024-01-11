@@ -4,7 +4,6 @@
     </div>
     <div class="pad">
     <?php 
-        <?php 
         if($service_fields->proxmox_type == 'qemu'){
             $vmType = 'kvm';
         }else{
