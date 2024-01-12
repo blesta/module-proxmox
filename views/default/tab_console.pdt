@@ -3,12 +3,51 @@
         <h3><?php $this->_('Proxmox.tab_console.heading_console');?></h3>
     </div>
     <div class="pad">
-        <ul>
-            <li><?php $this->_('Proxmox.tab_console.vnc_ip');?> <?php echo (isset($console->vnc_ip) ? $this->Html->safe($console->vnc_ip) : null);?></li>
-            <li><?php $this->_('Proxmox.tab_console.vnc_port');?> <?php echo (isset($console->vnc_port) ? $this->Html->safe($console->vnc_port) : null);?></li>
-            <li><?php $this->_('Proxmox.tab_console.vnc_user');?> <?php echo (isset($console->vnc_user) ? $this->Html->safe($console->vnc_user) : null);?></li>
-            <li><?php $this->_('Proxmox.tab_console.vnc_password');?> <?php echo (isset($console->vnc_password) ? $this->Html->safe($console->vnc_password) : null);?></li>
-        </ul>
+    <?php
+        $ticketUrl = 'https://'.$console->vnc_ip.'/api2/json/access/ticket';
+
+        $postData = array(
+            'username' => $service_fields->proxmox_username.'@pve',
+            'password' => $service_fields->password,
+        );
+    
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $ticketUrl);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+    
+        $ticketData = json_decode($response, true);
+        
+        function getMainDomain($subdomain) {
+            $urlParts = parse_url($subdomain);
+        
+            // Memeriksa apakah parse_url berhasil dan mengandung bagian host
+            if ($urlParts && isset($urlParts['host'])) {
+                $hostParts = explode('.', $urlParts['host']);
+        
+                // Memeriksa apakah ada setidaknya dua bagian pada domain (misal: example.com)
+                if (count($hostParts) >= 2) {
+                    // Mengambil dua bagian terakhir untuk mendapatkan domain utama
+                    $mainDomain = $hostParts[count($hostParts) - 2] . '.' . $hostParts[count($hostParts) - 1];
+                    return $mainDomain;
+                }
+            }
+        
+            return null; // Mengembalikan null jika tidak dapat menemukan domain utama
+        }
+        setcookie("PVEAuthCookie",$ticketData['data']['ticket'], 0, "/", '.'.getMainDomain('https://'.$_SERVER['HTTP_HOST']) );
+        
+        if($service_fields->proxmox_type == 'qemu'){
+            $vmType = 'kvm';
+        }else{
+            $vmType = 'lxc';
+        }
+        $url_vnc = "https://".$console->vnc_ip."/?console=".$vmType."&novnc=1&node=".$service_fields->proxmox_node."&resize=1&vmid=".$service_fields->proxmox_vserver_id."&path=api2/json/nodes/".$service_fields->proxmox_node."/".$service_fields->proxmox_type."/".$service_fields->proxmox_vserver_id."/vncwebsocket/port/".$console->vnc_port."/vncticket/".$console->vnc_password;
+        echo '<iframe src="'.$url_vnc.'" frameborder="0" scrolling="no" width="100%" height="800px" allow="fullscreen"></iframe>';
+    ?>
     </div>
 
 <script type="text/javascript">

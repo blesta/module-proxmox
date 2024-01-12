@@ -75,7 +75,7 @@ class ProxmoxApi
 
         $this->login();
     }
-
+    
     public function login()
     {
         $res = $this->submit('access/ticket', [
