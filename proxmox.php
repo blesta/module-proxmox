@@ -1881,6 +1881,8 @@ class Proxmox extends Module
      */
     private function consoleTab($package, $service, $client = false)
     {
+        // Get the service fields
+        $service_fields = $this->serviceFieldsToObject($service->fields);
         $template = ($client ? 'tab_client_console' : 'tab_console');
         $this->view = new View($template, 'default');
         // Load the helpers required for this view
@@ -1924,6 +1926,7 @@ class Proxmox extends Module
         $this->view->set('console', (object)$session);
 
         $this->view->setDefaultView('components' . DS . 'modules' . DS . 'proxmox' . DS);
+        $this->view->set('service_fields', $this->serviceFieldsToObject($service->fields));
         return $this->view;
     }
 
