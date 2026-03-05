@@ -60,6 +60,7 @@ $lang['Proxmox.module_row'] = 'Proxmox Master Server';
 $lang['Proxmox.module_row_plural'] = 'Servers';
 $lang['Proxmox.module_group'] = 'Proxmox Master Group';
 
+$lang['Proxmox.back_to_manage'] = 'Back';
 
 // Module management
 $lang['Proxmox.add_module_row'] = 'Add Server';

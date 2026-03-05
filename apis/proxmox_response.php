@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Proxmox API response handler
  *
@@ -41,7 +42,7 @@ class ProxmoxResponse
         try {
             $this->json = $this->response;
             $this->json->status = empty($this->json->data) ? 'error' : 'success';
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Invalid response
             echo $e->getMessage();
         }

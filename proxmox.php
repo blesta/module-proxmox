@@ -182,11 +182,7 @@ class Proxmox extends Module
 
         $new_vmid = [];
 
-        if (empty($row->meta->vmid) || $row->meta->vmid < 200) {
-            $new_vmid = 200;
-        } else {
-            $new_vmid = $row->meta->vmid;
-        }
+        $new_vmid = empty($row->meta->vmid) || $row->meta->vmid < 200 ? 200 : $row->meta->vmid;
 
         $params['vmid'] = '';
         $params['storage'] = $package->meta->storage;
@@ -207,7 +203,7 @@ class Proxmox extends Module
             $available_ips = explode("\n", $row->meta->ips);
             $params['ip'] = trim(array_shift($available_ips));
 
-            $client_id = (isset($vars['client_id']) ? $vars['client_id'] : '');
+            $client_id = ($vars['client_id'] ?? '');
 
             // Create a new client (if one does not already exist)
             $client = $this->createClient($client_id, $params['userid'], $row);
@@ -227,7 +223,7 @@ class Proxmox extends Module
                 // Create the Virtual Server
                 $this->log($row->meta->host . '|vserver-create', serialize($masked_params), 'input', true);
                 $response = $this->parseResponse($vserver_api->create($params), $row);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 // Internal Error
                 $this->Input->setErrors(['api' => ['internal' => Language::_('Proxmox.!error.api.internal', true)]]);
             }
@@ -450,7 +446,7 @@ class Proxmox extends Module
                 }
                 sleep(5);
                 $this->parseResponse($vserver_api->terminate($params), $row);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 // Internal Error
                 $this->Input->setErrors(['api' => ['internal' => Language::_('Proxmox.!error.api.internal', true)]]);
                 return;
@@ -501,7 +497,7 @@ class Proxmox extends Module
 
                 $this->log($row->meta->host . '|vserver-shutdown', serialize($params), 'input', true);
                 $response = $this->parseResponse($server_api->shutdown($params), $row);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 // Nothing to do
                 return;
             }
@@ -552,7 +548,7 @@ class Proxmox extends Module
 
                 $this->log($row->meta->host . '|vserver-boot', serialize($params), 'input', true);
                 $response = $this->parseResponse($server_api->boot($params), $row);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 // Nothing to do
                 return;
             }
@@ -736,6 +732,14 @@ class Proxmox extends Module
         // Load the helpers required for this view
         Loader::loadHelpers($this, ['Form', 'Html', 'Widget']);
 
+        // Fetch module
+        Loader::loadModels($this, ['ModuleManager']);
+        $module = $this->ModuleManager->getByClass(
+            \Illuminate\Support\Str::snake(get_class($this)),
+            Configure::get('Blesta.company_id')
+        );
+        $module = ($module[0] ?? []);
+        $this->view->set('module', (object) $module);
         $this->view->set('vars', (object)$vars);
         return $this->view->fetch();
     }
@@ -760,11 +764,19 @@ class Proxmox extends Module
 
         if (empty($vars)) {
             $vars = $module_row->meta;
-            
+
             // Mask password by replacing with ***
             $vars->password = '***';
         }
-        
+
+        // Fetch module
+        Loader::loadModels($this, ['ModuleManager']);
+        $module = $this->ModuleManager->getByClass(
+            \Illuminate\Support\Str::snake(get_class($this)),
+            Configure::get('Blesta.company_id')
+        );
+        $module = ($module[0] ?? []);
+        $this->view->set('module', (object) $module);
         $this->view->set('vars', (object)$vars);
         return $this->view->fetch();
     }
@@ -823,7 +835,7 @@ class Proxmox extends Module
         if (isset($vars['password']) && $vars['password'] == '***') {
             $vars['password'] = $module_row->meta->password;
         }
-        
+
         // Same as adding
         return $this->addModuleRow($vars);
     }
@@ -873,7 +885,6 @@ class Proxmox extends Module
             switch ($group->add_order) {
                 default:
                 case 'first':
-
                     foreach ($group->rows as $row) {
                         return $row->id;
                     }
@@ -1189,8 +1200,8 @@ class Proxmox extends Module
 
         // Fetch the module row available for this package
         $module_row = $this->getModuleRowByServer(
-            (isset($package->module_row) ? $package->module_row : 0),
-            (isset($package->module_group) ? $package->module_group : '')
+            ($package->module_row ?? 0),
+            ($package->module_group ?? '')
         );
 
         $fields = new ModuleFields();
@@ -1201,7 +1212,7 @@ class Proxmox extends Module
         $host_name->attach(
             $fields->fieldText(
                 'proxmox_hostname',
-                (isset($vars->proxmox_hostname) ? $vars->proxmox_hostname : null),
+                ($vars->proxmox_hostname ?? null),
                 ['id' => 'proxmox_hostname']
             )
         );
@@ -1209,7 +1220,7 @@ class Proxmox extends Module
         $password->attach(
             $fields->fieldText(
                 'password',
-                (isset($vars->password['password']) ? $vars->password['password'] : null),
+                ($vars->password['password'] ?? null),
                 ['id' => 'password']
             )
         );
@@ -1237,8 +1248,8 @@ class Proxmox extends Module
 
         // Fetch the module row available for this package
         $module_row = $this->getModuleRowByServer(
-            (isset($package->module_row) ? $package->module_row : 0),
-            (isset($package->module_group) ? $package->module_group : '')
+            ($package->module_row ?? 0),
+            ($package->module_group ?? '')
         );
 
         $fields = new ModuleFields();
@@ -1249,7 +1260,7 @@ class Proxmox extends Module
         $host_name->attach(
             $fields->fieldText(
                 'proxmox_hostname',
-                (isset($vars->proxmox_hostname) ? $vars->proxmox_hostname : ($vars->domain ?? null)),
+                ($vars->proxmox_hostname ?? ($vars->domain ?? null)),
                 ['id' => 'proxmox_hostname']
             )
         );
@@ -1257,7 +1268,7 @@ class Proxmox extends Module
         $password->attach(
             $fields->fieldText(
                 'password',
-                (isset($vars->password) ? $vars->password : null),
+                ($vars->password ?? null),
                 ['id' => 'password']
             )
         );
@@ -1370,22 +1381,17 @@ class Proxmox extends Module
     public function getClientTabs($package)
     {
 
-        if (($package->meta->type ?? null) === 'qemu')  {
-            return [
+        return ($package->meta->type ?? null) === 'qemu' ? [
                 'tabClientActions' => Language::_('Proxmox.tab_actions', true),
                 'tabClientStats' => Language::_('Proxmox.tab_stats', true),
                 'tabClientConsole' => Language::_('Proxmox.tab_console', true),
                 'tabClientIsoManager' => Language::_('Proxmox.tab_isomanager', true),
-            ];
-
-        } else {
-            return [
+            ] : [
                 'tabClientActions' => Language::_('Proxmox.tab_actions', true),
                 'tabClientStats' => Language::_('Proxmox.tab_stats', true),
                 'tabClientConsole' => Language::_('Proxmox.tab_console', true),
                 'tabClientLXCReinstall' => Language::_('Proxmox.tab_lxcreinstall', true),
             ];
-        }
     }
 
     /**
@@ -1522,26 +1528,30 @@ class Proxmox extends Module
         if (array_key_exists($get_key, (array)$get)) {
             switch ($get[$get_key]) {
                 case 'boot':
-                    if (!$this->performAction(
-                        'boot',
-                        $service_fields->proxmox_vserver_id,
-                        $service_fields->proxmox_type,
-                        $service_fields->proxmox_node,
-                        $module_row
-                    )) {
+                    if (
+                        !$this->performAction(
+                            'boot',
+                            $service_fields->proxmox_vserver_id,
+                            $service_fields->proxmox_type,
+                            $service_fields->proxmox_node,
+                            $module_row
+                        )
+                    ) {
                         $this->Input->setErrors(
                             ['api' => ['internal' => Language::_('Proxmox.!error.api.internal', true)]]
                         );
                     }
                     break;
                 case 'shutdown':
-                    if (!$this->performAction(
-                        'shutdown',
-                        $service_fields->proxmox_vserver_id,
-                        $service_fields->proxmox_type,
-                        $service_fields->proxmox_node,
-                        $module_row
-                    )) {
+                    if (
+                        !$this->performAction(
+                            'shutdown',
+                            $service_fields->proxmox_vserver_id,
+                            $service_fields->proxmox_type,
+                            $service_fields->proxmox_node,
+                            $module_row
+                        )
+                    ) {
                         $this->Input->setErrors(
                             ['api' => ['internal' => Language::_('Proxmox.!error.api.internal', true)]]
                         );
@@ -1557,7 +1567,7 @@ class Proxmox extends Module
                         $service_fields->proxmox_type,
                         $service_fields->proxmox_node,
                         $module_row,
-                        ['iso' => (isset($post['iso']) ? $post['iso'] : null)]
+                        ['iso' => ($post['iso'] ?? null)]
                     );
                     break;
                 case 'unmount':
@@ -1692,7 +1702,7 @@ class Proxmox extends Module
                     'ds' => $get[$get_key]
                 ];
                 $response = $this->parseResponse($server_api->graph($params), $module_row);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 // Nothing to do
             }
 
@@ -1750,7 +1760,7 @@ class Proxmox extends Module
             if ($response && ($response->status == 'success' || in_array($action, $null_actions))) {
                 return true;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Nothing to do
         }
 
@@ -1951,7 +1961,8 @@ class Proxmox extends Module
      * @param stdClass $service A stdClass object representing the current service
      * @return View A template view to be rendered
      */
-    private function isoManager($package, $service, $get = null, $post = null, $client = false){
+    private function isoManager($package, $service, $get = null, $post = null, $client = false)
+    {
 
         $template = ($client ? 'tab_client_isomanager' : '');
         $this->view = new View($template, 'default');
@@ -2074,11 +2085,11 @@ class Proxmox extends Module
         $step = 1024;
         $unit = 'B';
 
-        if (($value = number_format($bytes/($step*$step*$step), 2)) >= 1) {
+        if (($value = number_format($bytes / ($step * $step * $step), 2)) >= 1) {
             $unit = 'GB';
-        } elseif (($value = number_format($bytes/($step*$step), 2)) >= 1) {
+        } elseif (($value = number_format($bytes / ($step * $step), 2)) >= 1) {
             $unit = 'MB';
-        } elseif (($value = number_format($bytes/($step), 2)) >= 1) {
+        } elseif (($value = number_format($bytes / ($step), 2)) >= 1) {
             $unit = 'KB';
         } else {
             $value = $bytes;
@@ -2091,7 +2102,7 @@ class Proxmox extends Module
     {
 
         $days = floor($seconds / 86400);
-        $hours= floor(($seconds % 86400) / 3600);
+        $hours = floor(($seconds % 86400) / 3600);
         $minutes = floor(($seconds % 3600) / 60);
 
         return Language::_('Proxmox.!uptime.value', true, $days, $hours, $minutes);
@@ -2141,7 +2152,7 @@ class Proxmox extends Module
 
             $this->log($module_row->meta->host . '|vserver-status', serialize($params), 'input', true);
             $response = $this->parseResponse($server_api->status($params), $module_row);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Nothing to do
         }
 
@@ -2155,12 +2166,11 @@ class Proxmox extends Module
 
                 // Set CPU to percent usage
                 if ($key == 'cpu') {
-                    $data['cpu_formatted'] = round(($value*100), 2);
+                    $data['cpu_formatted'] = round(($value * 100), 2);
                 }
-                if ($key == 'uptime'){
+                if ($key == 'uptime') {
                     $data['uptime_formatted'] = $this->convertSecondsToDays($value);
-                }
-                elseif (array_key_exists($key, $percent_values)) {
+                } elseif (array_key_exists($key, $percent_values)) {
                     // Set mem and disk stats
                     if (isset($temp_data['max' . $key])) {
                         $data[$key . '_formatted']['used_' . $percent_values[$key] . '_formatted']
@@ -2168,7 +2178,7 @@ class Proxmox extends Module
                         $data[$key . '_formatted']['total_' . $percent_values[$key] . '_formatted']
                             = $this->convertBytesToString($temp_data['max' . $key]);
                         $data[$key . '_formatted']['percent_used_' . $percent_values[$key]]
-                            = round(($value/($temp_data['max' . $key] == 0 ? 1 : $temp_data['max' . $key])*100), 2);
+                            = round(($value / ($temp_data['max' . $key] == 0 ? 1 : $temp_data['max' . $key]) * 100), 2);
                     }
                 }
             }
@@ -2204,7 +2214,7 @@ class Proxmox extends Module
 
             $this->log($module_row->meta->host . '|vserver-isos', serialize($params), 'input', true);
             $response = $this->parseResponse($node_api->storageContent($params), $module_row);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Nothing to do
         }
 
@@ -2244,7 +2254,7 @@ class Proxmox extends Module
 
             $this->log($module_row->meta->host . '|vserver-templates', serialize($params), 'input', true);
             $response = $this->parseResponse($node_api->storageContent($params), $module_row);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Nothing to do
         }
 
@@ -2285,7 +2295,7 @@ class Proxmox extends Module
 
             $this->log($module_row->meta->host . '|node-statistics', serialize($params), 'input', true);
             $response = $this->parseResponse($nodes_api->statistics($params), $module_row);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Nothing to do
         }
 
@@ -2324,7 +2334,7 @@ class Proxmox extends Module
 
             $this->log($module_row->meta->host . '|nodes-storage', serialize($params), 'input', true);
             $response = $this->parseResponse($node_api->storageList($params), $module_row);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Nothing to do
         }
 
@@ -2363,7 +2373,7 @@ class Proxmox extends Module
 
             $this->log($module_row->meta->host . '|listnodes', serialize($params), 'input', true);
             $response = $this->parseResponse($nodes_api->getList($params), $module_row);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Nothing to do
             return [];
         }
@@ -2400,7 +2410,7 @@ class Proxmox extends Module
 
             $this->log($module_row->meta->host . '|liststorage', serialize([]), 'input', true);
             $response = $this->parseResponse($storage_api->getList(), $module_row);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Nothing to do
             return [];
         }
@@ -2433,7 +2443,7 @@ class Proxmox extends Module
             'node' => $node,
             'hostname' => isset($vars['proxmox_hostname']) ? strtolower($vars['proxmox_hostname']) : null,
             'userid' => isset($vars['client_id']) ? 'vmuser' . $vars['client_id'] : null,
-            'password'=> !empty($vars['password']) ? $vars['password'] : $this->generatePassword(),
+            'password' => !empty($vars['password']) ? $vars['password'] : $this->generatePassword(),
             'memory' => $package->meta->memory ?? 0,
             'swap' => $package->meta->swap ?? 0,
             'hdd' => $package->meta->hdd ?? 0,
@@ -2528,7 +2538,7 @@ class Proxmox extends Module
             // Check the client exists
             $this->log($module_row->meta->host . '|client-checkexists', serialize($params), 'input', true);
             $response = $this->parseResponse($client_api->checkExists($params), $module_row, true);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Internal Error
             $this->Input->setErrors(['api' => ['internal' => Language::_('Proxmox.!error.api.internal', true)]]);
             return $client_fields;
@@ -2561,7 +2571,7 @@ class Proxmox extends Module
                 // Create a client
                 $this->log($module_row->meta->host . '|client-create', serialize($masked_params), 'input', true);
                 $response = $this->parseResponse($client_api->create($params), $module_row, true);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 // Internal Error
                 $this->Input->setErrors(['api' => ['internal' => Language::_('Proxmox.!error.api.internal', true)]]);
             }
@@ -2574,7 +2584,7 @@ class Proxmox extends Module
 
                     $this->log($module_row->meta->host . '|client-checkexists', serialize($params), 'input', true);
                     $response = $this->parseResponse($client_api->checkExists($params), $module_row, true);
-                } catch (Exception $e) {
+                } catch (\Throwable $e) {
                     // Nothing to do
                 }
             }
@@ -2655,7 +2665,7 @@ class Proxmox extends Module
         foreach ($masked_params as $masked_param) {
             if (property_exists($output, $masked_param)) {
                 $raw_output = preg_replace(
-                    '/<' . $masked_param . ">(.*)<\/" . $masked_param . '>/',
+                    '/<' . $masked_param . '>(.*)<\/' . $masked_param . '>/',
                     '<' . $masked_param . '>***</' . $masked_param . '>',
                     $raw_output
                 );
@@ -2762,7 +2772,7 @@ class Proxmox extends Module
         $count = count($chars) - 1;
         $num_chars = (int)abs($min_chars == $max_chars ? $min_chars : mt_rand($min_chars, $max_chars));
 
-        for ($i=0; $i<$num_chars; $i++) {
+        for ($i = 0; $i < $num_chars; $i++) {
             $password = $chars[mt_rand(0, $count)] . $password;
         }
 
