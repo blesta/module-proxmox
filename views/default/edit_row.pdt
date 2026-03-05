@@ -3,86 +3,90 @@
 <?php
 $this->Widget->clear();
 $this->Widget->setLinkButtons([
-    ['name' => $this->_('Proxmox.back_to_manage', true), 'icon' => 'bi bi-arrow-left me-1', 'attributes' => ['href' => $this->base_uri . 'settings/company/modules/manage/' . $module->id]]
+    [
+        'name' => $this->_('Proxmox.back_to_manage', true),
+        'icon' => 'bi bi-arrow-left me-1',
+        'attributes' => ['href' => $this->base_uri . 'settings/company/modules/manage/' . $module->id],
+    ],
 ]);
 $this->Widget->create($this->_('Proxmox.edit_row.box_title', true));
 
 $this->Form->create(null, ['class' => 'disable-on-submit']);
 ?>
 
-<h6 class="form-section-header"><?php $this->_('Proxmox.edit_row.basic_title');?></h6>
+<h6 class="form-section-header"><?php $this->_('Proxmox.edit_row.basic_title'); ?></h6>
 
 <div class="mb-3">
     <label for="server_name" class="form-label">
-        <?php $this->_('Proxmox.row_meta.server_name');?>
+        <?php $this->_('Proxmox.row_meta.server_name'); ?>
     </label>
-    <?php
-    $this->Form->fieldText('server_name', ($vars->server_name ?? null), ['id' => 'server_name', 'class' => 'form-control']);
-    ?>
+    <?php $this->Form->fieldText('server_name', $vars->server_name ?? null, [
+        'id' => 'server_name',
+        'class' => 'form-control',
+    ]); ?>
 </div>
 
 <div class="mb-3">
     <label for="user" class="form-label">
-        <?php $this->_('Proxmox.row_meta.user');?>
+        <?php $this->_('Proxmox.row_meta.user'); ?>
     </label>
-    <?php
-    $this->Form->fieldText('user', ($vars->user ?? null), ['id' => 'user', 'class' => 'form-control']);
-    ?>
+    <?php $this->Form->fieldText('user', $vars->user ?? null, ['id' => 'user', 'class' => 'form-control']); ?>
 </div>
 
 <div class="mb-3">
     <label for="password" class="form-label">
-        <?php $this->_('Proxmox.row_meta.password');?>
+        <?php $this->_('Proxmox.row_meta.password'); ?>
     </label>
-    <?php
-    $this->Form->fieldText('password', ($vars->password ?? null), ['id' => 'password', 'class' => 'form-control']);
-    ?>
+    <?php $this->Form->fieldText('password', $vars->password ?? null, [
+        'id' => 'password',
+        'class' => 'form-control',
+    ]); ?>
 </div>
 
 <div class="mb-3">
     <label for="host" class="form-label">
-        <?php $this->_('Proxmox.row_meta.host');?>
+        <?php $this->_('Proxmox.row_meta.host'); ?>
     </label>
-    <?php
-    $this->Form->fieldText('host', ($vars->host ?? null), ['id' => 'host', 'class' => 'form-control']);
-    ?>
+    <?php $this->Form->fieldText('host', $vars->host ?? null, ['id' => 'host', 'class' => 'form-control']); ?>
 </div>
 
 <div class="mb-3">
     <label for="port" class="form-label">
-        <?php $this->_('Proxmox.row_meta.port');?>
+        <?php $this->_('Proxmox.row_meta.port'); ?>
     </label>
-    <?php
-    $this->Form->fieldText('port', ($vars->port ?? $this->_('Proxmox.row_meta.default_port', true)), ['id' => 'port', 'class' => 'form-control']);
-    ?>
+    <?php $this->Form->fieldText('port', $vars->port ?? $this->_('Proxmox.row_meta.default_port', true), [
+        'id' => 'port',
+        'class' => 'form-control',
+    ]); ?>
 </div>
 
 <div class="mb-3">
     <label for="vmid" class="form-label">
-        <?php $this->_('Proxmox.row_meta.vmid');?>
+        <?php $this->_('Proxmox.row_meta.vmid'); ?>
     </label>
-    <?php
-    $this->Form->fieldText('vmid', ($vars->vmid ?? $this->_('Proxmox.row_meta.default_vmid', true)), ['id' => 'vmid', 'class' => 'form-control']);
-    ?>
+    <?php $this->Form->fieldText('vmid', $vars->vmid ?? $this->_('Proxmox.row_meta.default_vmid', true), [
+        'id' => 'vmid',
+        'class' => 'form-control',
+    ]); ?>
 </div>
 
 <div class="mb-3">
     <label for="ips" class="form-label">
-        <?php $this->_('Proxmox.row_meta.ips');?>
+        <?php $this->_('Proxmox.row_meta.ips'); ?>
     </label>
-    <?php
-    $this->Form->fieldTextarea('ips', ($vars->ips ?? null), ['id' => 'ips', 'class' => 'form-control']);
-    ?>
+    <?php $this->Form->fieldTextarea('ips', $vars->ips ?? null, ['id' => 'ips', 'class' => 'form-control']); ?>
 </div>
 
 <?php $this->Widget->footer(); ?>
 <div class="d-flex justify-content-end">
-    <?php
-    $this->Form->fieldSubmit('save', $this->_('Proxmox.edit_row.add_btn', true), ['class' => 'btn btn-primary']);
-    ?>
+    <?php $this->Form->fieldSubmit('save', $this->_('Proxmox.edit_row.add_btn', true), [
+        'class' => 'btn btn-primary',
+    ]); ?>
 </div>
 
 <?php
 $this->Form->end();
 $this->Widget->end();
+
+
 ?>
