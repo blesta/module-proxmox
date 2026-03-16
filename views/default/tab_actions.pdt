@@ -1,8 +1,8 @@
 <?php /** @var View $this **/ ?>
 
-<h6 class="form-section-header first"><?php $this->_('Proxmox.tab_actions.heading_actions'); ?></h6>
+<h6 class="form-section-header"><?php $this->_('Proxmox.tab_actions.heading_actions'); ?></h6>
 
-<div class="pad">
+<div class="mb-3">
     <div class="options">
         <div class="status">
             <p><?php $this->_('Proxmox.tab_actions.server_status'); ?> <span class="buff <?php echo isset(
@@ -131,7 +131,7 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        $(this).blestaSetHeadTag("link", {
+        blestaSetHeadTag("link", {
             media: "screen",
             type: "text/css",
             rel: "stylesheet",

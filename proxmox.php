@@ -973,62 +973,84 @@ class Proxmox extends Module
 				</tr>
 			</table>
 
-			<script type=\"text/javascript\">
-				$(document).ready(function() {
+			<script type="text/javascript">
+				document.addEventListener('DOMContentLoaded', function() {
 					toggleProxmoxFields();
 
-					$('#proxmox_type').change(function() {
+					document.getElementById('proxmox_type').addEventListener('change', function() {
 						toggleProxmoxFields();
 					});
 
-					$('#proxmox_type').change(function() {
+					document.getElementById('proxmox_type').addEventListener('change', function() {
 						selectAssignedNodes();
 						fetchModuleOptions();
 					});
 
-					$('#proxmox_template_storage').change(function() {
+					document.getElementById('proxmox_template_storage').addEventListener('change', function() {
 						selectAssignedNodes();
 						fetchModuleOptions();
 					});
 
 					// Select all assigned groups on submit
-					$('#assigned_nodes').closest('form').submit(function() {
+					document.getElementById('assigned_nodes').closest('form').addEventListener('submit', function() {
 						selectAssignedNodes();
 					});
 
 					// Move nodes from right to left
-					$('.move_left').click(function() {
-						$('#available_nodes option:selected').appendTo($('#assigned_nodes'));
-						selectAssignedNodes();
-						fetchModuleOptions();
-						return false;
+					document.querySelectorAll('.move_left').forEach(function(el) {
+						el.addEventListener('click', function(e) {
+							e.preventDefault();
+							var availableNodes = document.getElementById('available_nodes');
+							var assignedNodes = document.getElementById('assigned_nodes');
+							var selectedOptions = availableNodes.querySelectorAll('option:checked');
+							selectedOptions.forEach(function(opt) {
+								assignedNodes.appendChild(opt);
+							});
+							selectAssignedNodes();
+							fetchModuleOptions();
+						});
 					});
 					// Move nodes from left to right
-					$('.move_right').click(function() {
-						$('#assigned_nodes option:selected').appendTo($('#available_nodes'));
-						selectAssignedNodes();
-						fetchModuleOptions();
-						return false;
+					document.querySelectorAll('.move_right').forEach(function(el) {
+						el.addEventListener('click', function(e) {
+							e.preventDefault();
+							var availableNodes = document.getElementById('available_nodes');
+							var assignedNodes = document.getElementById('assigned_nodes');
+							var selectedOptions = assignedNodes.querySelectorAll('option:checked');
+							selectedOptions.forEach(function(opt) {
+								availableNodes.appendChild(opt);
+							});
+							selectAssignedNodes();
+							fetchModuleOptions();
+						});
 					});
 				});
 
 				function selectAssignedNodes() {
-					$('#assigned_nodes option').attr('selected', 'selected');
+					document.querySelectorAll('#assigned_nodes option').forEach(function(opt) {
+						opt.selected = true;
+					});
 				}
 
 				function toggleProxmoxFields() {
+					var table = document.getElementById('assigned_nodes').closest('table');
 					// Hide fields dependent on this value
-					if ($('#proxmox_type').val() == '') {
-						$('#assigned_nodes').closest('table').hide();
+					if (document.getElementById('proxmox_type').value == '') {
+						table.style.display = 'none';
 					}
 					// Show fields dependent on this value
 					else {
-						$('#assigned_nodes').closest('table').show();
+						table.style.display = '';
 					}
 				}
 
-                $('#proxmox_type').parent().after($('#proxmox_node_selector'));
-                $('#proxmox_node_selector').show().wrap('<li></li>');
+				var proxmoxType = document.getElementById('proxmox_type');
+				var nodeSelector = document.getElementById('proxmox_node_selector');
+				proxmoxType.parentNode.insertAdjacentElement('afterend', nodeSelector);
+				nodeSelector.style.display = '';
+				var wrapper = document.createElement('li');
+				nodeSelector.parentNode.insertBefore(wrapper, nodeSelector);
+				wrapper.appendChild(nodeSelector);
 			</script>
 		");
 
