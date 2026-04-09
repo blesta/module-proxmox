@@ -1,5 +1,5 @@
 {
-    "version": "3.1.0",
+    "version": "4.0.0",
     "name": "Proxmox.name",
     "description": "Proxmox.description",
     "authors": [
@@ -25,9 +25,13 @@
         "group": "Proxmox.module_group"
     },
     "email_tags": {
-        "module": ["host", "port"],
+        "module": [
+            "host",
+            "port"
+        ],
         "package": [],
-        "service": ["proxmox_vserver_id",
+        "service": [
+            "proxmox_vserver_id",
             "proxmox_hostname",
             "proxmox_node",
             "proxmox_username",
@@ -38,5 +42,6 @@
             "proxmox_type",
             "proxmox_netspeed"
         ]
-    }
+    },
+    "icon": "bi-cloud"
 }

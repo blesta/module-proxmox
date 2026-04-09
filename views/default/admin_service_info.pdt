@@ -1,12 +1,22 @@
-    <table class="table">
-        <tr class="heading_row">
-            <td class="fixed_small center border_none"><i class="fas fa-level-up-alt fa-rotate-90"></i></td>
-            <td><?php $this->_('Proxmox.service_info.proxmox_username');?></td>
-            <td class="border_left last"><?php $this->_('Proxmox.service_info.proxmox_ip');?></td>
+<?php /** @var View $this **/ ?>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th><i class="bi bi-arrow-up"></i></th>
+            <th><?php $this->_('Proxmox.service_info.proxmox_username'); ?></th>
+            <th><?php $this->_('Proxmox.service_info.proxmox_ip'); ?></th>
         </tr>
+    </thead>
+    <tbody>
         <tr>
             <td></td>
-            <td><?php echo (isset($service_fields->proxmox_username) ? $this->Html->safe($service_fields->proxmox_username) : null);?></td>
-            <td><?php echo (isset($service_fields->proxmox_ip) ? $this->Html->safe($service_fields->proxmox_ip) : null);?></td>
+            <td><?php echo isset($service_fields->proxmox_username)
+                ? $this->Html->safe($service_fields->proxmox_username)
+                : null; ?></td>
+            <td><?php echo isset($service_fields->proxmox_ip)
+                ? $this->Html->safe($service_fields->proxmox_ip)
+                : null; ?></td>
         </tr>
-    </table>
+    </tbody>
+</table>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Proxmox VServer Management
  *
@@ -86,7 +87,7 @@ class ProxmoxVserver
                     'ostemplate' => $vars['template'],
                     'cores' => $vars['sockets'],
                     'memory' => $vars['memory'],
-                    'rootfs' => $vars['storage'] . ':'. $vars['hdd'],
+                    'rootfs' => $vars['storage'] . ':' . $vars['hdd'],
                     'storage' => $vars['storage'],
                     'hostname' => $vars['hostname'],
                     'password' => $vars['password'],

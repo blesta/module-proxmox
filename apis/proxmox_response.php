@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Proxmox API response handler
  *
@@ -17,6 +18,14 @@ class ProxmoxResponse
      */
     private $raw;
     private $errors = [];
+    /**
+     * @var stdClass The decoded response object
+     */
+    private $response;
+    /**
+     * @var array The response headers
+     */
+    private $headers;
 
     /**
      * Initializes the Proxmox Response
@@ -38,12 +47,9 @@ class ProxmoxResponse
             }
         }
 
-        try {
+        if ($this->response !== null) {
             $this->json = $this->response;
             $this->json->status = empty($this->json->data) ? 'error' : 'success';
-        } catch (Exception $e) {
-            // Invalid response
-            echo $e->getMessage();
         }
     }
 

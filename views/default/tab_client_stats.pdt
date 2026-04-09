@@ -1,14 +1,18 @@
 
-    <h4><?php $this->_('Proxmox.tab_client_stats.heading_graphs');?></h4>
+    <h4><?php $this->_('Proxmox.tab_client_stats.heading_graphs'); ?></h4>
     <div class="row options">
         <div class="col-md-12">
             <?php
             $graph_keys = ['mem,maxmem', 'cpu', 'netin,netout', 'diskread,diskwrite'];
-            foreach ($graph_keys as $value) {
-            ?>
-            <p><img src="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . (isset($service_id) ? $service_id : null) . '/tabClientStats/' . $value); ?>" /></p>
-            <?php
-            }
+            foreach ($graph_keys as $value) { ?>
+            <p><img src="<?php echo $this->Html->safe(
+                $this->base_uri .
+                    'services/manage/' .
+                    (isset($service_id) ? $service_id : null) .
+                    '/tabClientStats/' .
+                    $value,
+            ); ?>" /></p>
+            <?php }
             ?>
         </div>
     </div>

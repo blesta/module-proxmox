@@ -60,11 +60,14 @@ $lang['Proxmox.module_row'] = 'Proxmox Master Server';
 $lang['Proxmox.module_row_plural'] = 'Servers';
 $lang['Proxmox.module_group'] = 'Proxmox Master Group';
 
+$lang['Proxmox.back_to_manage'] = 'Back';
 
 // Module management
 $lang['Proxmox.add_module_row'] = 'Add Server';
 $lang['Proxmox.add_module_group'] = 'Add Server Group';
 $lang['Proxmox.manage.module_rows_title'] = 'Proxmox Master Servers';
+$lang['Proxmox.manage.tab_rows'] = 'Servers';
+$lang['Proxmox.manage.tab_groups'] = 'Server Groups';
 $lang['Proxmox.manage.module_groups_title'] = 'Proxmox Master Server Groups';
 $lang['Proxmox.manage.module_rows_heading.server_label'] = 'Server Label';
 $lang['Proxmox.manage.module_rows_heading.host'] = 'Hostname';

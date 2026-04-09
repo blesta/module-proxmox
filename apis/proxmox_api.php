@@ -55,6 +55,11 @@ class ProxmoxApi
     private $csrf_prevention_token;
 
     /**
+     * @var Blesta\Core\ServiceProviders\Logger Container logger
+     */
+    private $logger;
+
+    /**
      * Sets the connection details
      *
      * @param string $user The user to connect as
@@ -78,15 +83,21 @@ class ProxmoxApi
 
     public function login()
     {
-        $res = $this->submit('access/ticket', [
+        $login_response = $this->submit('access/ticket', [
             'username' => $this->user,
             'password' => $this->password
-        ], 'POST', false)->response();
+        ], 'POST', false);
+
+        $res = $login_response->response();
 
         if ($res && property_exists($res, 'data') && !empty($res->data)) {
             $this->ticket = $res->data->ticket;
             $this->username_from_ticket = $res->data->username;
             $this->csrf_prevention_token = $res->data->CSRFPreventionToken;
+        } else {
+            $this->logger->error(
+                'Proxmox login failed for ' . $this->user . '@' . $this->host . ': ' . $login_response->raw()
+            );
         }
     }
 
