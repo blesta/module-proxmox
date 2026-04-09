@@ -9,9 +9,8 @@ $this->Widget->setLinkButtons([
         'attributes' => ['href' => $this->base_uri . 'settings/company/modules/manage/' . $module->id],
     ],
 ]);
-$this->Widget->create($this->_('Proxmox.add_row.box_title', true));
-
 $this->Form->create(null, ['class' => 'disable-on-submit']);
+$this->Widget->create($this->_('Proxmox.add_row.box_title', true));
 ?>
 
 <h6 class="form-section-header"><?php $this->_('Proxmox.add_row.basic_title'); ?></h6>
@@ -85,8 +84,8 @@ $this->Form->create(null, ['class' => 'disable-on-submit']);
 </div>
 
 <?php
-$this->Form->end();
 $this->Widget->end();
+$this->Form->end();
 
 
 ?>

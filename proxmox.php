@@ -923,6 +923,7 @@ class Proxmox extends Module
             }
         }
 
+
         // Remove nodes from 'available' if they are currently 'assigned'
         if (isset($vars->meta['nodes'])) {
             $this->assignGroups($nodes, $vars->meta['nodes']);
@@ -940,119 +941,198 @@ class Proxmox extends Module
 
         // Show nodes, and set javascript field toggles
         $assigned_nodes = $vars->meta['nodes'] ?? [];
-        $this->Form->setOutput(true);
-        $fields->setHtml('
-			<table id="proxmox_node_selector" style="display: none;">
-				<tr>
-					<td>' . Language::_('Proxmox.package_fields.assigned_nodes', true) . '</td>
-					<td></td>
-					<td>' . Language::_('Proxmox.package_fields.available_nodes', true) . '</td>
-				</tr>
-				<tr>
-					<td>
-						'
-                        . $this->Form->fieldMultiSelect(
-                            'meta[nodes][]',
-                            $assigned_nodes,
-                            [],
-                            ['id' => 'assigned_nodes']
-                        )
-                        . '
-					</td>
-					<td><a href="#" class="move_left">&nbsp;</a> &nbsp; <a href="#" class="move_right">&nbsp;</a></td>
-					<td>
-						'
-                        . $this->Form->fieldMultiSelect(
-                            'available_nodes[]',
-                            $nodes ?? [],
-                            [],
-                            ['id' => 'available_nodes']
-                        )
-                        . "
-					</td>
-				</tr>
-			</table>
 
-			<script type="text/javascript">
-				document.addEventListener('DOMContentLoaded', function() {
+        // Build drag-item HTML for assigned and available nodes
+        $assigned_items_html = '';
+        foreach ($assigned_nodes as $value => $label) {
+            $assigned_items_html .= '<div class="drag-item" data-value="'
+                . htmlspecialchars($value, ENT_QUOTES) . '" draggable="true">'
+                . htmlspecialchars($label, ENT_QUOTES) . '</div>';
+        }
+        $available_items_html = '';
+        foreach ($nodes ?? [] as $value => $label) {
+            $available_items_html .= '<div class="drag-item" data-value="'
+                . htmlspecialchars($value, ENT_QUOTES) . '" draggable="true">'
+                . htmlspecialchars($label, ENT_QUOTES) . '</div>';
+        }
+
+        $fields->setHtml('
+			<div id="proxmox_node_selector" style="display: none;">
+				<div class="dual-select-container" data-group="proxmox-nodes">
+					<div class="dual-select-panel">
+						<label class="form-label">' . Language::_('Proxmox.package_fields.assigned_nodes', true) . '</label>
+						<div class="dual-select-dropzone">
+							<div class="drag-list" id="assigned_nodes">'
+                                . $assigned_items_html
+                            . '</div>
+						</div>
+					</div>
+					<div class="dual-select-controls">
+						<button type="button" class="btn btn-sm btn-outline-primary dual-select-btn move-left"
+							title="' . Language::_('Proxmox.package_fields.assigned_nodes', true) . '">
+							<i class="bi bi-arrow-left"></i>
+						</button>
+						<button type="button" class="btn btn-sm btn-outline-primary dual-select-btn move-right"
+							title="' . Language::_('Proxmox.package_fields.available_nodes', true) . '">
+							<i class="bi bi-arrow-right"></i>
+						</button>
+					</div>
+					<div class="dual-select-panel">
+						<label class="form-label">' . Language::_('Proxmox.package_fields.available_nodes', true) . '</label>
+						<div class="dual-select-dropzone">
+							<div class="drag-list" id="available_nodes">'
+                                . $available_items_html
+                            . '</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		<script>
+				(function() {
+					var draggedItem = null;
+
+					function setupDualSelect(container) {
+						var leftList = container.querySelector(".dual-select-panel:first-child .drag-list");
+						var rightList = container.querySelector(".dual-select-panel:last-child .drag-list");
+						var moveLeftBtn = container.querySelector(".move-left");
+						var moveRightBtn = container.querySelector(".move-right");
+
+						if (!leftList || !rightList) return;
+
+						function setupDragItems() {
+							container.querySelectorAll(".drag-item").forEach(function(item) {
+								item.addEventListener("click", function(e) {
+									e.stopPropagation();
+									if (e.ctrlKey || e.metaKey) {
+										this.classList.toggle("selected");
+									} else {
+										container.querySelectorAll(".drag-item").forEach(function(i) { i.classList.remove("selected"); });
+										this.classList.add("selected");
+									}
+								});
+
+								item.addEventListener("dblclick", function(e) {
+									e.stopPropagation();
+									var currentList = this.closest(".drag-list");
+									var targetList = currentList === leftList ? rightList : leftList;
+									targetList.appendChild(this);
+									this.classList.remove("selected");
+									fetchModuleOptions();
+								});
+
+								item.addEventListener("dragstart", function(e) {
+									draggedItem = this;
+									this.classList.add("dragging");
+									e.dataTransfer.effectAllowed = "move";
+									e.dataTransfer.setData("text/plain", this.textContent);
+								});
+
+								item.addEventListener("dragend", function() {
+									this.classList.remove("dragging");
+									container.querySelectorAll(".drag-list").forEach(function(l) { l.classList.remove("drag-over"); });
+								});
+							});
+						}
+
+						[leftList, rightList].forEach(function(list) {
+							list.addEventListener("dragover", function(e) {
+								e.preventDefault();
+								this.classList.add("drag-over");
+							});
+
+							list.addEventListener("dragleave", function(e) {
+								if (!this.contains(e.relatedTarget)) {
+									this.classList.remove("drag-over");
+								}
+							});
+
+							list.addEventListener("drop", function(e) {
+								e.preventDefault();
+								this.classList.remove("drag-over");
+								if (draggedItem && draggedItem.parentNode !== this) {
+									this.appendChild(draggedItem);
+									draggedItem.classList.remove("selected");
+									draggedItem = null;
+									fetchModuleOptions();
+								}
+							});
+						});
+
+						if (moveLeftBtn) {
+							moveLeftBtn.addEventListener("click", function() {
+								rightList.querySelectorAll(".drag-item.selected").forEach(function(item) {
+									leftList.appendChild(item);
+									item.classList.remove("selected");
+								});
+								fetchModuleOptions();
+							});
+						}
+
+						if (moveRightBtn) {
+							moveRightBtn.addEventListener("click", function() {
+								leftList.querySelectorAll(".drag-item.selected").forEach(function(item) {
+									rightList.appendChild(item);
+									item.classList.remove("selected");
+								});
+								fetchModuleOptions();
+							});
+						}
+
+						setupDragItems();
+					}
+
+					document.addEventListener("click", function(e) {
+						if (!e.target.closest(".drag-item")) {
+							document.querySelectorAll(".drag-item.selected").forEach(function(item) { item.classList.remove("selected"); });
+						}
+					});
+
+					function toggleProxmoxFields() {
+						var nodeSelector = document.getElementById("proxmox_node_selector");
+						if (document.getElementById("proxmox_type").value == "") {
+							nodeSelector.style.display = "none";
+						} else {
+							nodeSelector.style.display = "";
+						}
+					}
+
+					var proxmoxType = document.getElementById("proxmox_type");
+					var nodeSelector = document.getElementById("proxmox_node_selector");
+					proxmoxType.parentNode.insertAdjacentElement("afterend", nodeSelector);
+					var wrapper = document.createElement("div");
+					nodeSelector.parentNode.insertBefore(wrapper, nodeSelector);
+					wrapper.appendChild(nodeSelector);
+
+					setupDualSelect(nodeSelector.querySelector(".dual-select-container"));
 					toggleProxmoxFields();
 
-					document.getElementById('proxmox_type').addEventListener('change', function() {
+					proxmoxType.addEventListener("change", function() {
 						toggleProxmoxFields();
-					});
-
-					document.getElementById('proxmox_type').addEventListener('change', function() {
-						selectAssignedNodes();
 						fetchModuleOptions();
 					});
 
-					document.getElementById('proxmox_template_storage').addEventListener('change', function() {
-						selectAssignedNodes();
-						fetchModuleOptions();
-					});
-
-					// Select all assigned groups on submit
-					document.getElementById('assigned_nodes').closest('form').addEventListener('submit', function() {
-						selectAssignedNodes();
-					});
-
-					// Move nodes from right to left
-					document.querySelectorAll('.move_left').forEach(function(el) {
-						el.addEventListener('click', function(e) {
-							e.preventDefault();
-							var availableNodes = document.getElementById('available_nodes');
-							var assignedNodes = document.getElementById('assigned_nodes');
-							var selectedOptions = availableNodes.querySelectorAll('option:checked');
-							selectedOptions.forEach(function(opt) {
-								assignedNodes.appendChild(opt);
-							});
-							selectAssignedNodes();
+					var templateStorage = document.getElementById("proxmox_template_storage");
+					if (templateStorage) {
+						templateStorage.addEventListener("change", function() {
 							fetchModuleOptions();
 						});
-					});
-					// Move nodes from left to right
-					document.querySelectorAll('.move_right').forEach(function(el) {
-						el.addEventListener('click', function(e) {
-							e.preventDefault();
-							var availableNodes = document.getElementById('available_nodes');
-							var assignedNodes = document.getElementById('assigned_nodes');
-							var selectedOptions = assignedNodes.querySelectorAll('option:checked');
-							selectedOptions.forEach(function(opt) {
-								availableNodes.appendChild(opt);
-							});
-							selectAssignedNodes();
-							fetchModuleOptions();
+					}
+
+					document.getElementById("assigned_nodes").closest("form").addEventListener("submit", function() {
+						var assignedNodes = document.getElementById("assigned_nodes");
+						assignedNodes.querySelectorAll("input[name=\"meta[nodes][]\"]").forEach(function(i) { i.remove(); });
+						assignedNodes.querySelectorAll(".drag-item").forEach(function(item) {
+							var input = document.createElement("input");
+							input.type = "hidden";
+							input.name = "meta[nodes][]";
+							input.value = item.dataset.value;
+							assignedNodes.appendChild(input);
 						});
 					});
-				});
-
-				function selectAssignedNodes() {
-					document.querySelectorAll('#assigned_nodes option').forEach(function(opt) {
-						opt.selected = true;
-					});
-				}
-
-				function toggleProxmoxFields() {
-					var table = document.getElementById('assigned_nodes').closest('table');
-					// Hide fields dependent on this value
-					if (document.getElementById('proxmox_type').value == '') {
-						table.style.display = 'none';
-					}
-					// Show fields dependent on this value
-					else {
-						table.style.display = '';
-					}
-				}
-
-				var proxmoxType = document.getElementById('proxmox_type');
-				var nodeSelector = document.getElementById('proxmox_node_selector');
-				proxmoxType.parentNode.insertAdjacentElement('afterend', nodeSelector);
-				nodeSelector.style.display = '';
-				var wrapper = document.createElement('li');
-				nodeSelector.parentNode.insertBefore(wrapper, nodeSelector);
-				wrapper.appendChild(nodeSelector);
+					toggleProxmoxFields();
+				})();
 			</script>
-		");
+		');
 
         // Set the Proxmox type as a selectable option
         $types = ['' => Language::_('Proxmox.please_select', true)] + $this->getTypes();
@@ -1074,6 +1154,7 @@ class Proxmox extends Module
             $module_row,
             ($vars->meta['type'] ?? null) === 'lxc' ? 'rootdir' : 'images'
         );
+
         $storage = $fields->label(Language::_('Proxmox.package_fields.storage', true), 'proxmox_storage');
         $storage->attach(
             $fields->fieldSelect(
@@ -1449,7 +1530,7 @@ class Proxmox extends Module
         );
         $this->view->set(
             'templates',
-            $this->getServerTemplates($service_fields->proxmox_node, $package->meta->template_storage, $module_row)
+            $this->getServerTemplates($service_fields->proxmox_node, $package->meta->template_storage ?? null, $module_row)
         );
 
         $this->view->set('type', $service_fields->proxmox_type);
@@ -1941,13 +2022,15 @@ class Proxmox extends Module
         $response = $this->parseResponse($server_api->vnc($params), $module_row);
 
         // Set console info
-        $session = [
-            'vnc_ip' => $module_row->meta->host,
-            'vnc_user' => $response->data->user,
-            'vnc_password' => $response->data->ticket,
-            'vnc_port' => $response->data->port,
-            'vnc_cert' => str_replace("\n", '|', $response->data->cert)
-        ];
+        if ($response && $response->data) {
+            $session = [
+                'vnc_ip' => $module_row->meta->host,
+                'vnc_user' => $response->data->user,
+                'vnc_password' => $response->data->ticket,
+                'vnc_port' => $response->data->port,
+                'vnc_cert' => str_replace("\n", '|', $response->data->cert)
+            ];
+        }
 
         // Check whether the VNC vendor code is available
         $this->view->set('vnc_applet_available', is_dir(VENDORDIR . 'vnc'));
@@ -2084,7 +2167,7 @@ class Proxmox extends Module
         );
         $this->view->set(
             'templates',
-            $this->getServerTemplates($service_fields->proxmox_node, $package->meta->template_storage, $module_row)
+            $this->getServerTemplates($service_fields->proxmox_node, $package->meta->template_storage ?? null, $module_row)
         );
 
         $this->view->set('type', $service_fields->proxmox_type);
@@ -2241,11 +2324,12 @@ class Proxmox extends Module
         }
 
         $result = [];
-        foreach ($response->data as $file) {
+        foreach ($response->data ?? [] as $file) {
             if ($file->content == 'iso') {
                 $result[$file->volid] = $file->volid;
             }
         }
+
         return $result;
     }
 
@@ -2288,6 +2372,7 @@ class Proxmox extends Module
                 $result[$template] = $template;
             }
         }
+
         return $result;
     }
 
@@ -2357,11 +2442,11 @@ class Proxmox extends Module
             $this->log($module_row->meta->host . '|nodes-storage', serialize($params), 'input', true);
             $response = $this->parseResponse($node_api->storageList($params), $module_row);
         } catch (\Throwable $e) {
-            // Nothing to do
+            $this->log($module_row->meta->host . '|nodes-storage', $e->getMessage(), 'output', false);
         }
 
         $result = [];
-        foreach ($response->data as $storage) {
+        foreach (($response->data ?? []) as $storage) {
             if ($content_type === null || strpos($storage->content ?? '', $content_type) !== false) {
                 $result[$storage->storage] = $storage->storage;
             }
@@ -2685,7 +2770,7 @@ class Proxmox extends Module
         $raw_output = $response->raw();
 
         foreach ($masked_params as $masked_param) {
-            if (property_exists($output, $masked_param)) {
+            if ($output && property_exists($output, $masked_param)) {
                 $raw_output = preg_replace(
                     '/<' . $masked_param . '>(.*)<\/' . $masked_param . '>/',
                     '<' . $masked_param . '>***</' . $masked_param . '>',
@@ -2910,13 +2995,15 @@ class Proxmox extends Module
                 'meta[default_template]' => [
                     'format' => [
                        'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
-                       'message' => Language::_('Proxmox.!error.meta[default_template].format', true)
+                       'message' => Language::_('Proxmox.!error.meta[default_template].format', true),
+                       'if_set' => true
                     ]
                 ],
                 'meta[template_storage]' => [
                     'format' => [
                         'rule' => ['matches', '#^[0-9a-zA-Z.:/_-]+$#'],
-                        'message' => Language::_('Proxmox.!error.meta[template_storage].format', true)
+                        'message' => Language::_('Proxmox.!error.meta[template_storage].format', true),
+                        'if_set' => true
                     ]
                 ],
             ];

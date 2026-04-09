@@ -45,8 +45,8 @@
             <span class="s-boxes"><i class="fa fa-database fa-2x"></i><br> <b><?php echo isset(
                 $service_fields->proxmox_memory,
             )
-                ? $this->Html->safe($service_fields->proxmox_memory)
-                : null; ?> <?php $this->_('Proxmox.service_info.memory'); ?></b></span>
+                                                                               ? $this->Html->safe($service_fields->proxmox_memory)
+                                                                               : null; ?> <?php $this->_('Proxmox.service_info.memory'); ?></b></span>
         </div>
         <div class="col-sm-3">
             <span class="s-boxes"><i class="fa fa-server fa-2x"></i><br> <b><?php
@@ -121,33 +121,33 @@
                 <td><?php $this->_('Proxmox.service_info.vm_memory'); ?></td>
                 <td>
                    <?php
-                   $keys = ['mem_formatted' => 'memory'];
-                   foreach ($keys as $key => $name) {
-                       if (isset($server->{$key}) ? $server->{$key} : false) {
-                           $percent_used = isset($server->{$key}['percent_used_' . $name])
+                    $keys = ['mem_formatted' => 'memory'];
+                    foreach ($keys as $key => $name) {
+                        if ($server->{$key} ?? false) {
+                            $percent_used = isset($server->{$key}['percent_used_' . $name])
                                ? $this->Html->safe($server->{$key}['percent_used_' . $name])
                                : null; ?>
                                     <span class="buff <?php echo $percent_used > 80
                                         ? 'stopped'
                                         : 'running'; ?>"><?php $this->_(
-    'Proxmox.tab_stats.' . $name . '_stats',
-    false,
-    isset($server->{$key}['used_' . $name . '_formatted'])
-        ? $this->Html->safe($server->{$key}['used_' . $name . '_formatted'])
-        : null,
-    isset($server->{$key}['total_' . $name . '_formatted'])
-        ? $this->Html->safe($server->{$key}['total_' . $name . '_formatted'])
-        : null,
-); ?></span>
+                                            'Proxmox.tab_stats.' . $name . '_stats',
+                                            false,
+                                            isset($server->{$key}['used_' . $name . '_formatted'])
+                                            ? $this->Html->safe($server->{$key}['used_' . $name . '_formatted'])
+                                            : null,
+                                            isset($server->{$key}['total_' . $name . '_formatted'])
+                                            ? $this->Html->safe($server->{$key}['total_' . $name . '_formatted'])
+                                            : null,
+                                        ); ?></span>
                                     <?php $this->_(
                                         'Proxmox.tab_stats.' . $name . '_percent_available',
                                         false,
                                         $percent_used,
                                     ); ?>
-                                <?php
-                       }
-                   }
-                   ?></td>
+                                 <?php
+                        }
+                    }
+                    ?></td>
             </tr>
         </tbody>
      </table>
@@ -161,8 +161,8 @@
                 : ''; ?> class="btn btn-block btn-danger <?php echo ($server->status ?? null) != 'running'
      ? 'disabled'
      : ''; ?>" href="<?php echo $this->Html->safe(
-    $this->base_uri . 'services/manage/' . ($service_id ?? null) . '/tabClientActions/shutdown/',
-); ?>">
+         $this->base_uri . 'services/manage/' . ($service_id ?? null) . '/tabClientActions/shutdown/',
+     ); ?>">
                 <i class="fas fa-power-off"></i> <?php $this->_('Proxmox.!actions.shutdown'); ?>
             </a>
         </div>
@@ -172,8 +172,8 @@
                 : ''; ?> class="btn btn-light btn-block <?php echo ($server->status ?? null) != 'stopped'
      ? 'disabled'
      : ''; ?>" href="<?php echo $this->Html->safe(
-    $this->base_uri . 'services/manage/' . ($service_id ?? null) . '/tabClientActions/boot/',
-); ?>">
+         $this->base_uri . 'services/manage/' . ($service_id ?? null) . '/tabClientActions/boot/',
+     ); ?>">
                 <i class="fas fa-power-off"></i> <?php $this->_('Proxmox.!actions.boot'); ?>
             </a>
         </div>

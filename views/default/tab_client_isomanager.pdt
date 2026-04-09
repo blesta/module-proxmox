@@ -7,12 +7,12 @@
             <div class="w-100">
              <div class="form-group">
                    <?php
-                   $this->Form->label($this->_('Proxmox.tab_client_isomanager.field_iso', true), 'iso');
-                   $this->Form->fieldSelect('iso', $isos ?? null, $vars->iso ?? null, [
+                    $this->Form->label($this->_('Proxmox.tab_client_isomanager.field_iso', true), 'iso');
+                    $this->Form->fieldSelect('iso', $isos ?? null, $vars->iso ?? null, [
                        'id' => 'iso',
                        'class' => 'form-control',
-                   ]);
-                   ?>
+                    ]);
+                    ?>
                 </div>
             </div>
             <button class="btn btn-light float-right">
