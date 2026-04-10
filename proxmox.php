@@ -225,7 +225,7 @@ class Proxmox extends Module
                 $masked_params['password'] = '***';
 
                 // Create the Virtual Server
-                $this->log($row->meta->host . '|vserver-create', safe_serialize($masked_params), 'input', true);
+                $this->log($row->meta->host . '|vserver-create', serialize($masked_params), 'input', true);
                 $response = $this->parseResponse($vserver_api->create($params), $row);
             } catch (Exception $e) {
                 // Internal Error
@@ -444,7 +444,7 @@ class Proxmox extends Module
                 ];
 
                 // Terminate the Virtual Server
-                $this->log($row->meta->host . '|vserver-terminate', safe_serialize($params), 'input', true);
+                $this->log($row->meta->host . '|vserver-terminate', serialize($params), 'input', true);
                 if ($service_fields->proxmox_type != 'qemu') {
                     $this->parseResponse($vserver_api->shutdown($params), $row);
                 }
@@ -499,7 +499,7 @@ class Proxmox extends Module
                     'node' => $service_fields->proxmox_node
                 ];
 
-                $this->log($row->meta->host . '|vserver-shutdown', safe_serialize($params), 'input', true);
+                $this->log($row->meta->host . '|vserver-shutdown', serialize($params), 'input', true);
                 $response = $this->parseResponse($server_api->shutdown($params), $row);
             } catch (Exception $e) {
                 // Nothing to do
@@ -550,7 +550,7 @@ class Proxmox extends Module
                     'node' => $service_fields->proxmox_node
                 ];
 
-                $this->log($row->meta->host . '|vserver-boot', safe_serialize($params), 'input', true);
+                $this->log($row->meta->host . '|vserver-boot', serialize($params), 'input', true);
                 $response = $this->parseResponse($server_api->boot($params), $row);
             } catch (Exception $e) {
                 // Nothing to do
