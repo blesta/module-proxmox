@@ -43,5 +43,8 @@
             "proxmox_netspeed"
         ]
     },
-    "icon": "bi-cloud"
+    "logo": {
+        "light": "views/default/images/logo.svg",
+        "dark": "views/default/images/logo-dark.svg"
+    }
 }
