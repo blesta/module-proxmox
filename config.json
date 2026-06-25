@@ -1,5 +1,5 @@
 {
-    "version": "4.0.0",
+    "version": "4.0.1",
     "name": "Proxmox.name",
     "description": "Proxmox.description",
     "authors": [
@@ -43,5 +43,8 @@
             "proxmox_netspeed"
         ]
     },
-    "icon": "bi-cloud"
+    "logo": {
+        "light": "views/default/images/logo.svg",
+        "dark": "views/default/images/logo-dark.svg"
+    }
 }
